@@ -1,0 +1,16 @@
+{
+  "name": "Baby Time",
+  "short_name": "Baby Time",
+  "description": "A pocket bank of age-appropriate baby activities that learns what works for your bub.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#faf5ef",
+  "theme_color": "#faf5ef",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

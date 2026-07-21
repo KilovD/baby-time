@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#faf5ef">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Baby Time</title>
+<script>
+/* Flash-free theme boot: runs before first paint. */
+try{
+  var t=localStorage.getItem('bt-theme');
+  if(!t)t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
+  document.documentElement.dataset.theme=t;
+  var tm=document.querySelector('meta[name=theme-color]');
+  if(tm)tm.setAttribute('content',t==='dark'?'#121014':'#faf5ef');
+}catch(e){}
+</script>
+<style>
+/* ============================= THEME ============================= */
+:root{
+  --bg:#faf5ef; --bg2:#ffffff; --bg3:#f1e9df; --bg4:#e6dccd;
+  --fg:#2b2620; --fg-dim:#6f675c; --fg-faint:#857c6d;
+  --border:#e0d6c8; --border2:#c9bda9;
+  --accent:#c9564a; --accent-soft:#c9564a1c; --accent-fg:#ffffff;
+  --teal:#1e7361; --teal-soft:#2f8f7b1a;
+  --danger:#c23b3b; --danger-soft:#c23b3b14;
+  --warn:#8a6212; --warn-soft:#b07d181a;
+  --ok:#3d8f4e; --ok-soft:#3d8f4e1a;
+  --sel:#c9564a14; --shadow:0 6px 24px rgba(60,40,20,.16);
+  --sans:system-ui,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,Consolas,'Cascadia Mono',monospace;
+}
+html[data-theme="dark"]{color-scheme:dark}
+html[data-theme="dark"] body{
+  --bg:#121014; --bg2:#1a171c; --bg3:#282329; --bg4:#383239;
+  --fg:#f4f0ea; --fg-dim:#c8c2ba; --fg-faint:#948d84;
+  --border:#4a444c; --border2:#6a636d;
+  --accent:#f2938a; --accent-soft:#f2938a26; --accent-fg:#2a1210;
+  --teal:#5cc7b0; --teal-soft:#5cc7b024;
+  --danger:#ff7a70; --danger-soft:#ff7a7022;
+  --warn:#ffca4f; --warn-soft:#ffca4f22;
+  --ok:#6fd88a; --ok-soft:#6fd88a22;
+  --sel:#f2938a22; --shadow:0 8px 28px rgba(0,0,0,.7);
+}
+/* ============================= BASE ============================= */
+*{box-sizing:border-box}
+html{height:100%}
+body{min-height:100%;margin:0;background:var(--bg);color:var(--fg);
+  font:16px/1.5 var(--sans);-webkit-tap-highlight-color:transparent;
+  padding-bottom:env(safe-area-inset-bottom)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 14px;min-height:48px}
+button:active{transform:scale(.985)}
+button:disabled{opacity:.45;cursor:default;transform:none}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg);font-weight:650}
+button.danger{color:var(--danger);border-color:var(--danger);background:transparent}
+button.ghost{background:transparent;border-color:transparent}
+button.small{min-height:44px;padding:8px 12px;font-size:14px}
+input[type=text],input[type=search],input[type=number],input[type=date],select,textarea{
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;min-height:48px;outline:none;max-width:100%;width:100%;font-size:16px}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical;line-height:1.5}
+::placeholder{color:var(--fg-faint)}
+.dim{color:var(--fg-dim)} .faint{color:var(--fg-faint)} .small{font-size:13px}
+.hidden{display:none!important}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+a{color:var(--accent)}
+h1,h2,h3{line-height:1.25;margin:0 0 8px}
+label{display:block;font-size:14px;font-weight:600;color:var(--fg-dim);margin:16px 0 6px}
+/* ============================= TOPBAR ============================= */
+#topbar{position:sticky;top:0;z-index:30;height:calc(56px + env(safe-area-inset-top));display:flex;align-items:center;gap:6px;
+  padding:env(safe-area-inset-top) 8px 0;background:var(--bg);border-bottom:1px solid var(--border)}
+#tbBack{min-width:48px;font-size:22px;line-height:1}
+#tbTitle{font-weight:700;font-size:17px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#tbRight{display:flex;gap:6px}
+/* ============================= LAYOUT ============================= */
+#main{max-width:560px;margin:0 auto;padding:16px 16px 32px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+.card.tap{cursor:pointer}
+.card.tap:active{background:var(--sel)}
+button.card{display:block;width:100%;text-align:left;font:inherit}
+/* ---- home ---- */
+.agehead{display:flex;align-items:center;gap:12px;margin:6px 0 20px}
+.agehead .emoji{font-size:38px}
+.agehead .who{font-size:20px;font-weight:750}
+.agehead .age{color:var(--fg-dim)}
+.bigbtn{display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+  padding:16px;border-radius:16px;margin-bottom:12px;min-height:76px;
+  background:var(--bg2);border:1px solid var(--border)}
+.bigbtn .bi{font-size:30px;width:42px;text-align:center;flex:none}
+.bigbtn .bt{font-size:17px;font-weight:700}
+.bigbtn .bs{font-size:13px;color:var(--fg-dim);margin-top:2px}
+.homegrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:8px}
+.homegrid button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;min-height:80px;position:relative;border-radius:14px;background:var(--bg2)}
+.homegrid .gi{font-size:24px}
+.homegrid .gl{font-size:13px;color:var(--fg-dim)}
+.badge{position:absolute;top:8px;right:8px;background:var(--danger);color:#fff;font-size:12px;font-weight:700;
+  min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px}
+.resume{border:2px solid var(--accent);background:var(--accent-soft)}
+/* ---- chips ---- */
+.chiprow{display:flex;gap:8px;overflow-x:auto;padding:2px 0 8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.chiprow::-webkit-scrollbar{display:none}
+.chip{flex:none;font-size:14px;padding:9px 15px;min-height:44px;border-radius:22px;background:var(--bg2);border:1px solid var(--border);white-space:nowrap}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-fg);font-weight:650}
+.catchip{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--fg-dim);
+  background:var(--bg3);border-radius:12px;padding:3px 10px}
+.tagchip{display:inline-block;font-size:12px;color:var(--fg-dim);background:var(--bg3);border-radius:10px;padding:2px 9px}
+/* ---- browse cards ---- */
+.acard .nm{font-weight:700;font-size:16px}
+.acard .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px;font-size:13px;color:var(--fg-dim)}
+.bflag{color:var(--warn);font-weight:700}
+.bretired{color:var(--fg-faint);font-weight:600}
+.acard.is-retired .nm{color:var(--fg-faint);text-decoration:line-through}
+/* ---- activity view ---- */
+.actwrap{padding-bottom:150px}
+.actwrap.itin{padding-bottom:220px}
+.acthead .catchip{margin-bottom:10px}
+.acthead h1{font-size:26px;font-weight:800}
+.actmeta{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 4px;color:var(--fg-dim);font-size:14px}
+.actmeta b{color:var(--fg)}
+.actdesc{font-size:17px;line-height:1.65;margin-top:14px;white-space:pre-wrap}
+.itinbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;
+  background:var(--teal-soft);border:1px solid var(--teal);border-radius:12px;font-weight:600;color:var(--teal)}
+.dots{display:flex;gap:5px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--border2)}
+.dot.done{background:var(--teal)}
+.dot.cur{background:var(--accent);transform:scale(1.3)}
+.actionbar{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--bg);
+  border-top:1px solid var(--border);padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+.actionbar .inner{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.actionbar .mainrow{display:flex;gap:8px}
+.actionbar .mainrow .primary{flex:1;min-height:56px;font-size:17px}
+.flagnote{background:var(--warn-soft);border:1px solid var(--warn);border-radius:12px;padding:10px 14px;margin:12px 0;font-size:14px}
+/* ---- itinerary ---- */
+.itintotal{font-size:15px;font-weight:650;margin:10px 0}
+.itin-item{display:flex;align-items:center;gap:12px}
+.itin-item .mins{flex:none;font-weight:700;color:var(--teal);min-width:52px;text-align:right}
+.qchips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}
+.qchips .chip{min-height:48px;font-size:16px;padding:10px 18px}
+.sumline{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:15px}
+.sumline:last-child{border-bottom:none}
+/* ---- review ---- */
+.hist3{display:flex;gap:6px;margin-top:8px}
+.hdot{font-size:13px;padding:3px 9px;border-radius:10px;background:var(--bg3)}
+.hdot.good{color:var(--ok);background:var(--ok-soft)}
+.hdot.poor{color:var(--danger);background:var(--danger-soft)}
+.revbtns{display:flex;gap:8px;margin-top:12px}
+.revbtns button{flex:1}
+/* ---- forms / editor ---- */
+.formfoot{display:flex;gap:10px;margin-top:22px}
+.formfoot .primary{flex:1}
+.agerow{display:flex;gap:10px;align-items:center}
+.agerow input{flex:1}
+/* ---- settings ---- */
+.setsec{margin-bottom:26px}
+.setsec h3{font-size:14px;text-transform:uppercase;letter-spacing:.07em;color:var(--fg-faint);margin-bottom:10px}
+.setrow{display:flex;align-items:center;gap:10px;padding:6px 0}
+.devpanel{border:2px dashed var(--border2);border-radius:14px;padding:14px;margin-top:8px}
+/* ---- empty states ---- */
+.empty{text-align:center;color:var(--fg-dim);padding:36px 16px}
+.empty .ee{font-size:42px;margin-bottom:10px}
+/* ============================= OVERLAYS ============================= */
+#toasts{position:fixed;left:0;right:0;bottom:calc(20px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:8px;z-index:200;pointer-events:none}
+.toast{background:var(--fg);color:var(--bg);padding:11px 18px;border-radius:12px;font-size:14px;max-width:86vw;box-shadow:var(--shadow)}
+.toast.err{background:var(--danger);color:#fff}
+#modalWrap{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);
+  padding:22px;width:100%;max-width:420px;max-height:86vh;overflow:auto}
+.modal h2{font-size:19px}
+.mbtns{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.mbtns button{min-width:96px}
+/* completion flow */
+.stepper{display:flex;align-items:center;justify-content:center;gap:14px;margin:18px 0}
+.stepper button{width:64px;height:64px;min-height:64px;font-size:28px;border-radius:16px;flex:none}
+.stepper input{width:110px;text-align:center;font-size:30px;font-weight:800;min-height:64px;-moz-appearance:textfield}
+.stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none}
+.feelbtns{display:flex;gap:12px;margin:18px 0 4px}
+.feelbtns button{flex:1;display:flex;flex-direction:column;gap:8px;align-items:center;padding:18px 10px;min-height:110px;border-radius:16px;font-size:16px;font-weight:650}
+.feelbtns .fe{font-size:36px}
+.feelbtns .good:active{background:var(--ok-soft)}
+.feelbtns .poor:active{background:var(--danger-soft)}
+/* desktop niceties */
+@media(min-width:700px){
+  body{font-size:15px}
+  #topbar{padding:0 calc(50vw - 280px)}
+  button:hover{background:var(--bg4)}
+  button.primary:hover{background:var(--accent);filter:brightness(1.07)}
+  button.ghost:hover{background:var(--bg3)}
+  .card.tap:hover{border-color:var(--accent)}
+}
+</style>
+</head>
+<body>
+<header id="topbar">
+  <button id="tbBack" class="ghost hidden" aria-label="Back">&#8592;</button>
+  <div id="tbTitle">Baby Time</div>
+  <div id="tbRight"></div>
+</header>
+<main id="main"></main>
+<div id="toasts" aria-live="polite"></div>
+<div id="modalWrap" class="hidden"></div>
+<script>
+'use strict';
+/* ============================= HELPERS ============================= */
+const $=s=>document.querySelector(s);
+function el(tag,attrs,...kids){
+  const n=document.createElement(tag);
+  if(attrs) for(const [k,v] of Object.entries(attrs)){
+    if(v==null||v===false) continue;
+    if(k==='class') n.className=v;
+    else if(k==='html') n.innerHTML=v;
+    else if(k.startsWith('on')) n.addEventListener(k.slice(2),v);
+    else if(k==='value') n.value=v;
+    else if(k==='checked') n.checked=!!v;
+    else if(k==='disabled') n.disabled=!!v;
+    else n.setAttribute(k,v===true?'':v);
+  }
+  for(const k of kids.flat(9)){ if(k==null||k===false) continue; n.append(k.nodeType?k:String(k)); }
+  return n;
+}
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function debounce(fn,ms){let t;const f=(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms);};f.now=(...a)=>{clearTimeout(t);fn(...a);};return f;}
+function toast(msg,kind){
+  const t=el('div',{class:'toast'+(kind==='err'?' err':'')},msg);
+  $('#toasts').append(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .4s';setTimeout(()=>t.remove(),450);},kind==='err'?4200:2600);
+}
+function fmtDate(iso){const d=new Date(iso);return d.toLocaleDateString(undefined,{day:'numeric',month:'short'});}
+function localToday(){
+  const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+/* Modal system.
+   Modals never create history entries; a Back press with a modal open cancels
+   the modal only (the popstate handler restores the current view's entry).
+   Every modal passes onCancel so no promise is ever left pending. */
+const modalState={open:false,onCancel:null,prevFocus:null};
+function showModal(node,onCancel){
+  const w=$('#modalWrap');w.innerHTML='';w.append(node);w.classList.remove('hidden');
+  node.setAttribute('role','dialog');node.setAttribute('aria-modal','true');
+  modalState.open=true;modalState.onCancel=onCancel||null;
+  modalState.prevFocus=document.activeElement;
+  $('#main').setAttribute('inert','');$('#topbar').setAttribute('inert','');
+  const f=node.querySelector('input,select,textarea,button');
+  if(f)setTimeout(()=>{try{f.focus();}catch(e){}},30);
+}
+function closeModal(){
+  modalState.open=false;modalState.onCancel=null;
+  const w=$('#modalWrap');w.classList.add('hidden');w.innerHTML='';
+  $('#main').removeAttribute('inert');$('#topbar').removeAttribute('inert');
+  const p=modalState.prevFocus;modalState.prevFocus=null;
+  if(p&&p.isConnected)try{p.focus();}catch(e){}
+}
+function cancelModal(){
+  if(!modalState.open)return;
+  const cb=modalState.onCancel;
+  closeModal();
+  if(cb)cb();
+}
+function confirmDlg(msg,{danger,okText}={}){
+  return new Promise(res=>{
+    showModal(el('div',{class:'modal'},
+      el('div',{style:'font-size:16px;white-space:pre-wrap'},msg),
+      el('div',{class:'mbtns'},
+        el('button',{onclick:()=>{closeModal();res(false);}},'Cancel'),
+        el('button',{class:danger?'danger':'primary',onclick:()=>{closeModal();res(true);}},okText||'OK'))),
+      ()=>res(false));
+  });
+}
+/* IndexedDB key-value store */
+const store={db:null,ok:false,
+  init(){return new Promise(res=>{try{
+    const r=indexedDB.open('baby-time',1);
+    r.onupgradeneeded=()=>r.result.createObjectStore('kv');
+    r.onsuccess=()=>{store.db=r.result;store.ok=true;res();};
+    r.onerror=()=>res();
+  }catch(e){res();}});},
+  get(k){return new Promise(res=>{if(!store.ok)return res(undefined);try{
+    const t=store.db.transaction('kv').objectStore('kv').get(k);
+    t.onsuccess=()=>res(t.result);t.onerror=()=>res(undefined);}catch(e){res(undefined);}});},
+  set(k,v){return new Promise(res=>{if(!store.ok)return res(false);try{
+    const t=store.db.transaction('kv','readwrite').objectStore('kv').put(v,k);
+    t.onsuccess=()=>res(true);t.onerror=()=>res(false);}catch(e){res(false);}});},
+  del(k){return new Promise(res=>{if(!store.ok)return res();try{
+    const t=store.db.transaction('kv','readwrite').objectStore('kv').delete(k);
+    t.onsuccess=()=>res();t.onerror=()=>res();}catch(e){res();}});}
+};
+/* ============================= CATEGORIES ============================= */
+const CATEGORY_META={
+  'tummy-time':{label:'Tummy time',emoji:'\u{1F422}'},
+  'sensory':{label:'Sensory',emoji:'✨'},
+  'music':{label:'Music & songs',emoji:'\u{1F3B5}'},
+  'motor':{label:'Motor skills',emoji:'\u{1F4AA}'},
+  'visual':{label:'Visual',emoji:'\u{1F440}'},
+  'social':{label:'Social',emoji:'\u{1F970}'},
+  'outdoor':{label:'Outdoors',emoji:'\u{1F33F}'},
+  'reading':{label:'Reading',emoji:'\u{1F4DA}'},
+  'touch':{label:'Massage & touch',emoji:'\u{1F90D}'},
+  'routines':{label:'Everyday',emoji:'\u{1F9FA}'}
+};
+function catMeta(c){return CATEGORY_META[c]||{label:c||'Other',emoji:'\u{1F9F8}'};}
+/* ============================= SEED DATA ============================= */
+const SEED_VERSION=1;
+/* Authored fields only. Ids are permanent — never rename one once shipped. */
+const SEED_ACTIVITIES=[
+/* -------- Tummy time (6) -------- */
+{id:'a-tummy-mat',name:'Tummy time on the play mat',category:'tummy-time',ageRange:{minMonths:2,maxMonths:6},baseDuration:5,tags:['floor','active'],
+ description:'Lay bub tummy-down on a firm mat with one or two toys just in reach. Get down to eye level and chat or jiggle a toy to encourage lifting and turning the head.\n\nFinish before the grizzles start, so tummy time stays a happy place.'},
+{id:'a-tummy-mirror',name:'Tummy time with a mirror',category:'tummy-time',ageRange:{minMonths:2,maxMonths:6},baseDuration:5,tags:['floor','props'],
+ description:'Prop a baby-safe mirror in front of bub during tummy time. The fascinating baby staring back encourages head lifting and longer, happier sessions.\n\nNarrate what they’re seeing: “Who’s that gorgeous baby?”'},
+{id:'a-tummy-chest',name:'Chest-to-chest tummy time',category:'tummy-time',ageRange:{minMonths:0,maxMonths:5},baseDuration:5,tags:['no-props','cuddly'],
+ description:'Lie back on the couch or bed, semi-reclined, with bub on your chest facing you. Talk and pull faces — they’ll work those neck muscles to look at you.\n\nLovely low-pressure tummy time for days when the mat isn’t a hit.'},
+{id:'a-tummy-towel',name:'Tummy time over a rolled towel',category:'tummy-time',ageRange:{minMonths:2,maxMonths:6},baseDuration:4,tags:['floor','props'],
+ description:'Place a rolled towel under bub’s chest with their arms forward over the roll. The slight lift makes head-raising easier and gives a fresh view of the room.\n\nSlide a toy or high-contrast card into view to keep it interesting.'},
+{id:'a-tummy-cards',name:'Tummy time gallery',category:'tummy-time',ageRange:{minMonths:2,maxMonths:6},baseDuration:5,tags:['floor','props'],
+ description:'Set up high-contrast cards or bold picture books in an arc in front of bub during tummy time, like a little art gallery. Move one card slowly from side to side.\n\nSwap cards when attention drifts.'},
+{id:'a-aeroplane',name:'Aeroplane rides',category:'tummy-time',ageRange:{minMonths:3,maxMonths:8},baseDuration:3,tags:['active','no-props'],
+ description:'Lie on your back with knees bent and bub resting tummy-down along your shins, holding them securely the whole time. Gentle sways and lifts — with sound effects — build neck and core strength while feeling like a game.'},
+/* -------- Sensory (8) -------- */
+{id:'a-texture-tour',name:'Texture touch tour',category:'sensory',ageRange:{minMonths:2,maxMonths:7},baseDuration:5,tags:['props','quiet'],
+ description:'Gather a few safe textures — velvet, wool, a silky scarf, corduroy — and brush each gently over bub’s hands, arms and feet, naming each one. “Soft… scratchy… smooth.”\n\nWatch which ones get the biggest reaction.'},
+{id:'a-crinkle',name:'Crinkle and scrunch',category:'sensory',ageRange:{minMonths:3,maxMonths:7},baseDuration:4,tags:['props'],
+ description:'Offer crinkly things to grasp and mouth — a crinkle book, baby-safe crinkle paper, or a scrunchy wrapper sealed inside a fabric square. That papery sound is baby gold.\n\nSupervise closely with anything small.'},
+{id:'a-flannel-play',name:'Warm flannel play',category:'sensory',ageRange:{minMonths:3,maxMonths:8},baseDuration:4,tags:['props','quiet'],
+ description:'With bub on the change mat, slowly wipe a warm damp flannel over hands, feet and tummy, naming each body part as you go. A gentle, giggly introduction to temperature and touch.\n\nNice before a bath or on a warm day.'},
+{id:'a-scarf-float',name:'Floating scarves',category:'sensory',ageRange:{minMonths:3,maxMonths:8},baseDuration:4,tags:['props','active'],
+ description:'Waft a light scarf or muslin square up in the air and let it drift down onto bub’s tummy or legs, with a big “wheee!”. Let them grab, tug and mouth it.\n\nEndless fun from thirty grams of fabric.'},
+{id:'a-discovery-bottle',name:'Discovery bottle',category:'sensory',ageRange:{minMonths:2,maxMonths:7},baseDuration:4,tags:['props'],
+ description:'Use a tightly sealed clear bottle with water and glitter or beads inside. Shake, roll and tilt it slowly in front of bub, then let them bat at it.\n\nCheck the lid is tight before every use.'},
+{id:'a-sound-safari',name:'Sound safari',category:'sensory',ageRange:{minMonths:0,maxMonths:6},baseDuration:4,tags:['quiet','no-props','wind-down'],
+ description:'Sit quietly together and hunt for sounds: birds outside, the washing machine, a clock. Name each one — “Can you hear the kookaburra?”\n\nWatch bub go still and listen. A lovely wind-down activity.'},
+{id:'a-bubbles',name:'Bubble watching',category:'sensory',ageRange:{minMonths:2,maxMonths:9},baseDuration:5,tags:['props'],
+ description:'Blow bubbles slowly so they drift through bub’s field of view. Tracking their float and pop is a proper workout for little eyes.\n\nOutdoors on a still day is magic; over the bath works too.'},
+{id:'a-torch-shadows',name:'Light and shadow play',category:'sensory',ageRange:{minMonths:2,maxMonths:6},baseDuration:4,tags:['props','quiet','wind-down'],
+ description:'In a dim room, sweep a soft torch beam slowly across the wall or ceiling, or make simple shadow shapes with your hand. Slow movements only — the point is calm fascination, not disco.\n\nGreat in the pre-bed wind-down.'},
+/* -------- Music & songs (6) -------- */
+{id:'a-action-rhymes',name:'Action rhymes',category:'music',ageRange:{minMonths:0,maxMonths:12},baseDuration:5,tags:['no-props','talky'],
+ description:'Run through the classics with actions on bub’s body: “Incy Wincy Spider” walked up the tummy, “Round and Round the Garden” on the palm.\n\nAnticipation is the game — pause before the tickle and watch them light up.'},
+{id:'a-sing-sway',name:'Sing and sway',category:'music',ageRange:{minMonths:0,maxMonths:9},baseDuration:5,tags:['active','no-props'],
+ description:'Hold bub securely against you, put on a song or sing one, and sway, dip and turn gently around the room.\n\nMovement plus music plus your heartbeat — the original baby disco.'},
+{id:'a-shaker-time',name:'Shaker time',category:'music',ageRange:{minMonths:2,maxMonths:8},baseDuration:4,tags:['props'],
+ description:'Demonstrate a rattle or shaker with a simple rhythm, then hold it near bub’s hand and let them have a go — even accidental shakes count.\n\nAlternate slow and fast, loud and soft.'},
+{id:'a-pat-a-cake',name:'Pat-a-cake hands',category:'music',ageRange:{minMonths:3,maxMonths:9},baseDuration:3,tags:['no-props'],
+ description:'Take bub’s hands gently in yours and clap through “Pat-a-cake” or “If You’re Happy and You Know It”. They feel the rhythm through their whole body.\n\nFinish with a big hooray, arms up.'},
+{id:'a-humming-cuddle',name:'Humming cuddles',category:'music',ageRange:{minMonths:0,maxMonths:6},baseDuration:3,tags:['quiet','wind-down','no-props'],
+ description:'Hold bub against your chest and hum low, slow tunes — they feel the vibration as much as they hear it. Brilliant for settling grizzly moments.\n\nAny tune works; the cheesier the better.'},
+{id:'a-kitchen-concert',name:'Lap concert',category:'music',ageRange:{minMonths:1,maxMonths:8},baseDuration:4,tags:['props','active'],
+ description:'Sit bub on your lap facing a wooden spoon and an upturned bowl or pot, and tap out simple beats. Take their hand and help them bang along.\n\nLoud, silly, wonderful.'},
+/* -------- Motor skills (6) -------- */
+{id:'a-bicycle-legs',name:'Bicycle legs',category:'motor',ageRange:{minMonths:1,maxMonths:6},baseDuration:3,tags:['floor','no-props'],
+ description:'With bub on their back, take their lower legs and cycle them gently, with commentary — “pedal, pedal, pedal!”.\n\nGreat for hips and core, and famously helpful for windy tummies.'},
+{id:'a-rolling-practice',name:'Rolling practice',category:'motor',ageRange:{minMonths:3,maxMonths:7},baseDuration:4,tags:['floor'],
+ description:'With bub on their back, tempt them with a toy held off to one side, then help the roll along with a gentle guide at hip and shoulder. Practise both directions.\n\nCheer wildly for any amount of progress.'},
+{id:'a-reach-grab',name:'Reach and grab',category:'motor',ageRange:{minMonths:3,maxMonths:7},baseDuration:6,tags:['props','floor'],
+ description:'Dangle a toy just within bub’s reach — from your hand or a play gym — and let them swipe, reach and (eventually) grab. Vary sides and heights.\n\nA little frustration builds focus, but rescue the toy into reach before it tips into tears.'},
+{id:'a-pull-to-sit',name:'Pull-to-sit',category:'motor',ageRange:{minMonths:3,maxMonths:6},baseDuration:2,tags:['no-props'],
+ description:'With bub on their back, let them grip your thumbs (support their wrists too) and slowly draw them up towards sitting, then ease back down.\n\nWatch the head — if it lags a lot, keep the pulls small and shallow. A few reps is plenty.'},
+{id:'a-kick-gym',name:'Kick-about',category:'motor',ageRange:{minMonths:2,maxMonths:6},baseDuration:6,tags:['floor','props'],
+ description:'Position bub under a play gym or near a soft toy so their kicks make things move, rattle or jingle. Cause and effect plus leg strength.\n\nBare feet make it even better.'},
+{id:'a-lap-bounce',name:'Lap bounces',category:'motor',ageRange:{minMonths:3,maxMonths:8},baseDuration:3,tags:['active','no-props'],
+ description:'Hold bub standing on your lap, fully supported under the arms, and let them bounce and push with their legs. Add a bouncing rhyme — “This is the way the lady rides”.\n\nStop while it’s still fun.'},
+/* -------- Visual (5) -------- */
+{id:'a-contrast-cards',name:'High-contrast gazing',category:'visual',ageRange:{minMonths:0,maxMonths:5},baseDuration:4,tags:['props','quiet'],
+ description:'Hold a high-contrast card or bold picture about 25–30 cm from bub’s face and keep it steady until they lock on. Swap cards slowly.\n\nYou’ll see intense little-scientist concentration.'},
+{id:'a-slow-tracking',name:'Slow toy tracking',category:'visual',ageRange:{minMonths:2,maxMonths:6},baseDuration:3,tags:['props','quiet'],
+ description:'Hold a bright toy about 30 cm away, catch bub’s gaze, then move it slowly side to side, then up and down, with pauses.\n\nIf their eyes lose it, come back to centre and start again.'},
+{id:'a-funny-faces',name:'Funny faces',category:'visual',ageRange:{minMonths:0,maxMonths:6},baseDuration:4,tags:['no-props','talky'],
+ description:'Get about 30 cm from bub’s face and work through your repertoire: surprised, delighted, tongue out, slow blinks. Give them time to study you and — around this age — try to copy.\n\nThe tongue poke is often the first trick they’ll mirror.'},
+{id:'a-window-watch',name:'Window watching',category:'visual',ageRange:{minMonths:1,maxMonths:9},baseDuration:6,tags:['no-props','quiet'],
+ description:'Hold bub at a window with a view of anything moving — trees, cars, washing on the line, birds. Narrate the show.\n\nThe mix of light, depth and motion is proper visual gymnastics.'},
+{id:'a-mobile-watch',name:'Mobile watching',category:'visual',ageRange:{minMonths:0,maxMonths:5},baseDuration:5,tags:['props','quiet'],
+ description:'Lie bub under a mobile or hanging toy that turns slowly. Give it a gentle spin and let them track it around.\n\nThis one buys the odd quiet minute — have your cuppa while they’re engrossed.'},
+/* -------- Social (5) -------- */
+{id:'a-mirror-mates',name:'Mirror mates',category:'social',ageRange:{minMonths:2,maxMonths:9},baseDuration:5,tags:['props','talky'],
+ description:'Sit with bub in front of a mirror, both faces visible. Wave, pull faces, name what you see — “There’s your nose!”.\n\nThey won’t know it’s them yet; the baby in the mirror is simply a delightful new friend.'},
+{id:'a-baby-chat',name:'Baby conversations',category:'social',ageRange:{minMonths:1,maxMonths:9},baseDuration:5,tags:['no-props','talky'],
+ description:'When bub coos or gurgles, treat it as conversation: pause, reply — “Is that right? Tell me more!” — then wait for their turn again.\n\nThis serve-and-return is the foundation of language. Ham it up.'},
+{id:'a-peekaboo',name:'Peekaboo',category:'social',ageRange:{minMonths:3,maxMonths:10},baseDuration:4,tags:['no-props'],
+ description:'Hide your face behind your hands or a muslin, pause for suspense, then pop out with a bright “boo!”.\n\nAt this age the anticipation is the whole game. Keep hides short and reappearances gentle.'},
+{id:'a-house-tour',name:'Grand house tour',category:'social',ageRange:{minMonths:0,maxMonths:9},baseDuration:6,tags:['no-props','talky'],
+ description:'Carry bub around the house narrating like a tour guide: name objects, flick lights on and off, touch curtains, smell the coffee jar.\n\nFamiliar things are endlessly interesting when you’re brand new.'},
+{id:'a-photo-chat',name:'Family photo chat',category:'social',ageRange:{minMonths:2,maxMonths:10},baseDuration:4,tags:['props','talky','quiet'],
+ description:'Look at photos of family together — on the wall or your phone. Point and name each person warmly: “That’s Grandma!”.\n\nFaces are bub’s favourite subject, and named faces build early recognition.'},
+/* -------- Outdoors (4) -------- */
+{id:'a-pram-walk',name:'Pram walk and chat',category:'outdoor',ageRange:{minMonths:0,maxMonths:12},baseDuration:15,tags:['outdoor','active'],
+ description:'A stroll with running commentary: the weather, the dogs, the neighbours’ garden gnomes. Fresh air often resets a scratchy mood — theirs and yours.\n\nTime it before a nap and the motion may do the settling for you.'},
+{id:'a-tree-gazing',name:'Tree gazing',category:'outdoor',ageRange:{minMonths:1,maxMonths:8},baseDuration:8,tags:['outdoor','quiet','wind-down'],
+ description:'Lie bub on a blanket in the shade under a tree and let them watch leaves and light move overhead. Nature’s own mobile.\n\nStay close and enjoy the excuse to lie down.'},
+{id:'a-veranda-weather',name:'Weather watching',category:'outdoor',ageRange:{minMonths:0,maxMonths:9},baseDuration:6,tags:['outdoor','quiet'],
+ description:'Step outside or onto the veranda and let bub feel the day: breeze on their cheeks, warmth, the smell of rain. Describe it all.\n\nTwo minutes of weather beats twenty minutes of grizzling inside.'},
+{id:'a-garden-safari',name:'Garden safari',category:'outdoor',ageRange:{minMonths:1,maxMonths:9},baseDuration:6,tags:['outdoor','talky'],
+ description:'Carry bub slowly around the garden or street greenery. Let them (gently) touch a leaf, smell a flower, watch a bee from a respectful distance.\n\nNarrate like Attenborough.'},
+/* -------- Reading (4) -------- */
+{id:'a-contrast-book',name:'High-contrast book',category:'reading',ageRange:{minMonths:0,maxMonths:5},baseDuration:5,tags:['props','quiet'],
+ description:'Work through a black-and-white or bold-colour board book one page at a time, letting bub really study each page. Point and name.\n\nRepetition is a feature, not a bug — the same book daily is perfect.'},
+{id:'a-rhyme-book',name:'Rhyming story time',category:'reading',ageRange:{minMonths:0,maxMonths:10},baseDuration:6,tags:['props','quiet','talky'],
+ description:'Read a rhythmic, rhyming book with full theatrical commitment — voices, pauses, emphasis. At this age the music of your voice matters far more than the plot.\n\nThe same time each day builds a lovely ritual.'},
+{id:'a-touch-feel-book',name:'Touch-and-feel book',category:'reading',ageRange:{minMonths:3,maxMonths:10},baseDuration:5,tags:['props','quiet'],
+ description:'Read a touch-and-feel book, guiding bub’s hand to each texture: “Feel the fluffy sheep!”. Reading plus sensory play in one.\n\nLet them linger on favourite pages.'},
+{id:'a-read-anything',name:'Read them anything',category:'reading',ageRange:{minMonths:0,maxMonths:12},baseDuration:8,tags:['quiet','no-props'],
+ description:'Read whatever you’re reading — the novel, the news, a recipe — aloud in a warm, expressive voice while bub lies nearby or on your lap.\n\nThey get language exposure; you get to actually read. Everybody wins.'},
+/* -------- Massage & touch (4) -------- */
+{id:'a-leg-massage',name:'Leg and foot massage',category:'touch',ageRange:{minMonths:0,maxMonths:8},baseDuration:5,tags:['quiet','wind-down'],
+ description:'After a nappy change or bath, massage bub’s legs and feet with gentle, firm strokes — thumbs circling the soles, little squeezes down the calves. Add a little baby-safe oil if you like.\n\nWatch for the full-body relax.'},
+{id:'a-tummy-massage',name:'Tummy massage',category:'touch',ageRange:{minMonths:0,maxMonths:8},baseDuration:4,tags:['quiet','wind-down'],
+ description:'With warm hands, stroke bub’s tummy in slow clockwise circles, then “I love you”: a stroke down their left side, an L across and down, then a U. Comforting, and can help shift wind.\n\nSkip it straight after a big feed.'},
+{id:'a-baby-yoga',name:'Baby stretches',category:'touch',ageRange:{minMonths:1,maxMonths:7},baseDuration:5,tags:['floor','quiet'],
+ description:'Gentle stretches with bub on their back: knees to tummy, toes towards the opposite hand, easy hip circles. Slow and smooth, never forcing.\n\nPair each move with a sound effect for maximum giggles.'},
+{id:'a-skin-to-skin',name:'Skin-to-skin cuddles',category:'touch',ageRange:{minMonths:0,maxMonths:6},baseDuration:10,tags:['quiet','wind-down','cuddly'],
+ description:'Strip bub to their nappy and lie them on your bare chest with a blanket over you both. Heartbeat, warmth, breathing — the original baby-calming technology.\n\nEqually good for grown-up nervous systems.'},
+/* -------- Everyday (2) -------- */
+{id:'a-nappy-narration',name:'Nappy-change cabaret',category:'routines',ageRange:{minMonths:0,maxMonths:10},baseDuration:3,tags:['no-props','talky'],
+ description:'Turn the change table into a stage: narrate every step, name body parts, add a rhyme and a raspberry on the tummy at the end.\n\nDozens of changes a week — each one a tiny language lesson.'},
+{id:'a-washing-helper',name:'Laundry assistant',category:'routines',ageRange:{minMonths:1,maxMonths:9},baseDuration:5,tags:['props','talky'],
+ description:'Do the folding with bub lying beside the pile. Waft a warm towel gently over them, play peekaboo with a pillowcase, name the colours as you fold.\n\nChores plus entertainment in one.'}
+];
+/* ============================= APP STATE ============================= */
+const App={
+  data:null,
+  stack:[],
+  nowOffsetMs:0,
+  sessionStart:null,
+  installPrompt:null,
+  wakeLock:null,
+  browse:{q:'',cat:null,tags:[],allAges:false,showRetired:false}
+};
+App.now=()=>new Date(Date.now()+App.nowOffsetMs);
+/* ============================= DATA MODEL ============================= */
+function blankData(){
+  return {format:'baby-time',version:1,seedVersion:0,
+    settings:{birthDate:null},
+    activities:[],itinerary:null};
+}
+function activityFromSeed(s){
+  return {id:s.id,name:s.name,description:s.description,category:s.category,
+    ageRange:{minMonths:s.ageRange.minMonths,maxMonths:s.ageRange.maxMonths},
+    baseDuration:s.baseDuration,tags:[...s.tags],
+    flagged:false,retired:false,custom:false,modified:false,
+    lastReviewedAt:null,history:[]};
+}
+function seedData(){
+  const d=blankData();
+  d.activities=SEED_ACTIVITIES.map(activityFromSeed);
+  d.seedVersion=SEED_VERSION;
+  return d;
+}
+function mergeSeeds(d){
+  if((d.seedVersion||0)>=SEED_VERSION)return false;
+  for(const s of SEED_ACTIVITIES){
+    const a=d.activities.find(x=>x.id===s.id);
+    if(!a){d.activities.push(activityFromSeed(s));continue;}
+    if(a.custom||a.modified)continue;
+    a.name=s.name;a.description=s.description;a.category=s.category;
+    a.ageRange={minMonths:s.ageRange.minMonths,maxMonths:s.ageRange.maxMonths};
+    a.baseDuration=s.baseDuration;a.tags=[...s.tags];
+  }
+  d.seedVersion=SEED_VERSION;
+  return true;
+}
+function clampNum(v,lo,hi,def){v=+v;if(!isFinite(v))return def;return Math.min(hi,Math.max(lo,v));}
+function normalize(d){
+  if(!d||typeof d!=='object'||d.format!=='baby-time'||!Array.isArray(d.activities))
+    throw new Error('Not a Baby Time data file.');
+  d.version=1;
+  d.seedVersion=+d.seedVersion||0;
+  d.settings=Object.assign({birthDate:null},d.settings);
+  if(d.settings.birthDate&&!/^\d{4}-\d{2}-\d{2}$/.test(d.settings.birthDate))d.settings.birthDate=null;
+  const seen=new Set();
+  d.activities=d.activities.filter(a=>{
+    if(!a||typeof a!=='object'||!a.id||seen.has(a.id))return false;
+    seen.add(a.id);return true;
+  });
+  for(const a of d.activities){
+    a.name=String(a.name||'Unnamed activity');
+    a.description=String(a.description||'');
+    a.category=String(a.category||'other');
+    const r=a.ageRange||{};
+    a.ageRange={minMonths:clampNum(r.minMonths,0,60,0),maxMonths:clampNum(r.maxMonths,0,60,12)};
+    if(a.ageRange.maxMonths<a.ageRange.minMonths)a.ageRange.maxMonths=a.ageRange.minMonths;
+    a.baseDuration=clampNum(a.baseDuration,1,120,5);
+    a.tags=Array.isArray(a.tags)?a.tags.map(t=>String(t).trim()).filter(Boolean):[];
+    a.flagged=!!a.flagged;a.retired=!!a.retired;a.custom=!!a.custom;a.modified=!!a.modified;
+    a.lastReviewedAt=a.lastReviewedAt||null;
+    a.history=(Array.isArray(a.history)?a.history:[])
+      .filter(h=>h&&h.at&&isFinite(+h.engagedMinutes))
+      .map(h=>({at:String(h.at),engagedMinutes:clampNum(h.engagedMinutes,0,600,0),wentWell:!!h.wentWell}))
+      .sort((x,y)=>x.at<y.at?-1:x.at>y.at?1:0)
+      .slice(-100);
+  }
+  const it=d.itinerary;
+  if(it&&Array.isArray(it.items)&&it.items.length
+     &&it.items.every(i=>i&&d.activities.some(a=>a.id===i.activityId))){
+    it.pos=clampNum(it.pos,0,it.items.length-1,0);
+    it.targetMinutes=clampNum(it.targetMinutes,1,600,30);
+    for(const i of it.items){
+      if(!['pending','done','skipped'].includes(i.status))i.status='pending';
+      i.engagedMinutes=isFinite(+i.engagedMinutes)?+i.engagedMinutes:null;
+    }
+  }else d.itinerary=null;
+  return d;
+}
+function A(id){return App.data.activities.find(a=>a.id===id)||null;}
+function uid(){return 'u-'+Math.random().toString(36).slice(2,9);}
+/* ---- persistence ---- */
+const schedulePersist=debounce(async()=>{
+  if(!App.data)return;
+  const ok=await store.set('data',{time:Date.now(),json:JSON.stringify(App.data)});
+  if(!ok&&!App.warnedStorage){
+    App.warnedStorage=true;
+    toast('Saving failed — this browser is blocking storage. Export a backup from Settings.','err');
+  }
+},400);
+function touch(){schedulePersist();}
+/* ============================= DOMAIN ============================= */
+function addMonths(d,m){
+  /* clamps the day so 31 Jan + 1 month = 28/29 Feb, never 2/3 Mar */
+  const r=new Date(d.getFullYear(),d.getMonth()+m,1);
+  const dim=new Date(r.getFullYear(),r.getMonth()+1,0).getDate();
+  r.setDate(Math.min(d.getDate(),dim));
+  return r;
+}
+function ageMonths(){
+  const dob=App.data&&App.data.settings.birthDate;
+  if(!dob)return null;
+  const b=new Date(dob+'T00:00:00'),n=App.now();
+  let m=(n.getFullYear()-b.getFullYear())*12+(n.getMonth()-b.getMonth());
+  let anchor=addMonths(b,m);
+  while(m>0&&anchor>n){m--;anchor=addMonths(b,m);}
+  if(m<0)return 0;
+  const frac=Math.max(0,Math.min((n-anchor)/86400000/30.44,0.999));
+  return m+frac;
+}
+function ageLabel(){
+  const m=ageMonths();
+  if(m==null)return '';
+  const months=Math.floor(m);
+  const weeks=Math.floor((m-months)*4.345);
+  if(months===0&&weeks===0)return 'brand new';
+  const mp=months===1?'1 month':months+' months';
+  const wp=weeks===1?'1 week':weeks+' weeks';
+  if(months===0)return wp+' old';
+  if(weeks===0)return mp+' old';
+  return mp+', '+wp;
+}
+function isAgeAppropriate(a){
+  const m=ageMonths();
+  if(m==null)return true;
+  return a.ageRange.minMonths<=m&&m<=a.ageRange.maxMonths;
+}
+function isAvailable(a){return !a.retired&&isAgeAppropriate(a);}
+function isPickable(a){return isAvailable(a)&&!a.flagged;}
+function expectedDuration(a){
+  const last=a.history.slice(-5).map(h=>h.engagedMinutes).filter(Number.isFinite);
+  if(!last.length)return a.baseDuration;
+  return Math.max(1,Math.round(last.reduce((s,m)=>s+m,0)/last.length));
+}
+function poorStreak(a){
+  let n=0;
+  for(let i=a.history.length-1;i>=0;i--){
+    const h=a.history[i];
+    if(a.lastReviewedAt&&h.at<=a.lastReviewedAt)break;
+    if(h.wentWell)break;
+    n++;
+  }
+  return n;
+}
+function recordCompletion(a,mins,wentWell){
+  a.history.push({at:App.now().toISOString(),engagedMinutes:mins,wentWell:!!wentWell});
+  if(a.history.length>100)a.history=a.history.slice(-100);
+  const wasFlagged=a.flagged;
+  if(poorStreak(a)>=3)a.flagged=true;
+  touch();
+  return a.flagged&&!wasFlagged;
+}
+function flaggedCount(){return App.data.activities.filter(a=>a.flagged&&!a.retired).length;}
+/* ---- picking & itineraries ---- */
+function daysSinceLast(a){
+  if(!a.history.length)return null;
+  return (App.now()-new Date(a.history[a.history.length-1].at))/86400000;
+}
+function recencyFactor(a){
+  const d=daysSinceLast(a);
+  if(d==null)return 1.1;
+  if(d<1)return .15;
+  if(d<2)return .4;
+  if(d<3)return .7;
+  return 1;
+}
+function scoreActivity(a,picked){
+  const sameCat=picked.filter(p=>p.category===a.category).length;
+  return Math.max(.01,recencyFactor(a)*Math.pow(.35,sameCat));
+}
+function weightedPick(list,scoreFn,rng){
+  let total=0;
+  const w=list.map(a=>{const s=scoreFn(a);total+=s;return s;});
+  let r=rng()*total;
+  for(let i=0;i<list.length;i++){r-=w[i];if(r<=0)return list[i];}
+  return list[list.length-1];
+}
+function pickRandomActivity(excludeId,rng){
+  rng=rng||Math.random;
+  let pool=App.data.activities.filter(isPickable);
+  if(pool.length>1&&excludeId)pool=pool.filter(a=>a.id!==excludeId);
+  if(!pool.length)return null;
+  return weightedPick(pool,a=>scoreActivity(a,[]),rng);
+}
+function buildItinerary(target,rng){
+  rng=rng||Math.random;
+  const pool=App.data.activities.filter(isPickable);
+  const picked=[];
+  let remaining=target;
+  const overshoot=Math.min(5,Math.round(target*.2));
+  while(remaining>0){
+    const fits=pool.filter(a=>!picked.includes(a)&&expectedDuration(a)<=remaining+overshoot);
+    if(!fits.length)break;
+    const a=weightedPick(fits,x=>scoreActivity(x,picked),rng);
+    picked.push(a);
+    remaining-=expectedDuration(a);
+  }
+  if(!picked.length){
+    const sorted=[...pool].sort((x,y)=>expectedDuration(x)-expectedDuration(y));
+    if(!sorted.length)return {items:[],note:'No activities are available right now — check the Review inbox or Browse with “All ages” on.'};
+    return {items:[sorted[0]],note:'Shortest available activity is '+expectedDuration(sorted[0])+' min, a bit over your target.'};
+  }
+  return {items:picked,note:null};
+}
+function itineraryTotal(items){return items.reduce((s,a)=>s+expectedDuration(a),0);}
+/* ============================= NAVIGATION ============================= */
+function nav(view,params,replace){
+  const entry={view,params:params||{}};
+  if(replace&&App.stack.length){
+    App.stack[App.stack.length-1]=entry;
+    history.replaceState({d:App.stack.length-1},'');
+  }else{
+    App.stack.push(entry);
+    history.pushState({d:App.stack.length-1},'');
+  }
+  renderView(entry);
+}
+function goBack(){if(App.stack.length>1)history.back();}
+function goHome(){
+  /* unwind real browser history back to the root entry */
+  const n=App.stack.length-1;
+  if(n>0)history.go(-n);
+  else renderView(App.stack[0]);
+}
+function resetStack(view){
+  /* hard reset (erase / import): the current entry becomes the new root */
+  App.stack=[{view,params:{}}];
+  history.replaceState({d:0},'');
+  renderView(App.stack[0]);
+}
+window.addEventListener('popstate',e=>{
+  if(modalState.open){
+    /* Back with a modal open cancels the modal only; restore the entry
+       the browser just popped so the view itself stays put. */
+    cancelModal();
+    history.pushState({d:App.stack.length-1},'');
+    return;
+  }
+  const d=e.state&&typeof e.state.d==='number'?e.state.d:0;
+  App.stack.length=Math.max(1,Math.min(App.stack.length,d+1));
+  renderView(App.stack[App.stack.length-1]);
+});
+function releaseWakeLock(){
+  App.wantWakeLock=false;
+  if(App.wakeLock){try{App.wakeLock.release();}catch(e){}App.wakeLock=null;}
+}
+function requestWakeLock(){
+  if(!navigator.wakeLock||!App.wantWakeLock)return;
+  const tok=App.wakeToken;
+  navigator.wakeLock.request('screen').then(l=>{
+    if(App.wakeToken!==tok||!App.wantWakeLock){try{l.release();}catch(e){}}
+    else App.wakeLock=l;
+  }).catch(()=>{});
+}
+function renderView(entry){
+  App.wakeToken=(App.wakeToken||0)+1;
+  releaseWakeLock();
+  const m=$('#main');m.innerHTML='';
+  $('#tbRight').innerHTML='';
+  $('#tbBack').classList.toggle('hidden',App.stack.length<=1);
+  window.scrollTo(0,0);
+  const v={
+    onboarding:renderOnboarding,home:renderHome,browse:renderBrowse,
+    activity:renderActivity,itinerarySetup:renderItinerarySetup,
+    itineraryDone:renderItineraryDone,review:renderReview,
+    editor:renderEditor,settings:renderSettings
+  }[entry.view];
+  if(v)v(m,entry.params);
+}
+function setTitle(t){$('#tbTitle').textContent=t;}
+/* ============================= VIEWS ============================= */
+function renderOnboarding(m){
+  setTitle('Baby Time');
+  m.append(
+    el('div',{class:'agehead',style:'margin-top:26px'},
+      el('div',{class:'emoji'},'\u{1F476}'),
+      el('div',null,el('div',{class:'who'},'Welcome to Baby Time'),
+        el('div',{class:'age'},'A pocket bank of baby activities'))),
+    el('p',{class:'dim'},'To show the right activities as bub grows, Baby Time needs one thing: their date of birth. It never leaves this device.'),
+    el('label',null,'Bub’s date of birth'));
+  const inp=el('input',{type:'date',max:localToday()});
+  const go=el('button',{class:'primary',style:'width:100%;margin-top:18px;min-height:56px',onclick:()=>{
+    if(!inp.value){toast('Pop in the date of birth first','err');return;}
+    App.data.settings.birthDate=inp.value;
+    touch();
+    nav('home',null,true);
+  }},'Let’s go');
+  m.append(inp,go);
+}
+function renderHome(m){
+  if(!App.data.settings.birthDate){renderOnboarding(m);return;}
+  setTitle('Baby Time');
+  $('#tbRight').append(el('button',{class:'ghost small',onclick:()=>nav('settings'),'aria-label':'Settings'},'⚙️'));
+  if(!store.ok)m.append(el('div',{class:'flagnote'},
+    '⚠️ This browser is blocking storage — nothing can be saved. Everything will be lost when you close the app.'));
+  m.append(el('div',{class:'agehead'},
+    el('div',{class:'emoji'},'\u{1F476}'),
+    el('div',null,el('div',{class:'who'},'Hello!'),
+      el('div',{class:'age'},'Bub is '+ageLabel()))));
+  const it=App.data.itinerary;
+  if(it){
+    const done=it.items.filter(i=>i.status!=='pending').length;
+    m.append(el('button',{class:'bigbtn resume',onclick:()=>nav('activity',{id:it.items[it.pos].activityId,ctx:'itinerary'})},
+      el('div',{class:'bi'},'⏳'),
+      el('div',null,el('div',{class:'bt'},'Resume itinerary'),
+        el('div',{class:'bs'},done+' of '+it.items.length+' done — pick up where you left off'))));
+  }
+  m.append(
+    el('button',{class:'bigbtn',onclick:()=>nav('browse')},
+      el('div',{class:'bi'},'\u{1F50D}'),
+      el('div',null,el('div',{class:'bt'},'Browse activities'),
+        el('div',{class:'bs'},'Find something specific'))),
+    el('button',{class:'bigbtn',onclick:()=>{
+      const a=pickRandomActivity(null);
+      if(!a){toast('No activities available — check the Review inbox','err');return;}
+      nav('activity',{id:a.id,ctx:'random'});
+    }},
+      el('div',{class:'bi'},'\u{1F3B2}'),
+      el('div',null,el('div',{class:'bt'},'Random activity'),
+        el('div',{class:'bs'},'Surprise us both'))),
+    el('button',{class:'bigbtn',onclick:()=>nav('itinerarySetup')},
+      el('div',{class:'bi'},'\u{1F4CB}'),
+      el('div',null,el('div',{class:'bt'},'Build an itinerary'),
+        el('div',{class:'bs'},'Fill a stretch of time with a plan'))));
+  const fc=flaggedCount();
+  m.append(el('div',{class:'homegrid'},
+    el('button',{onclick:()=>nav('review')},
+      fc?el('div',{class:'badge'},fc):null,
+      el('div',{class:'gi'},'\u{1F6A9}'),el('div',{class:'gl'},'Review')),
+    el('button',{onclick:()=>nav('editor',{id:null})},
+      el('div',{class:'gi'},'➕'),el('div',{class:'gl'},'Add activity')),
+    el('button',{onclick:()=>nav('settings')},
+      el('div',{class:'gi'},'⚙️'),el('div',{class:'gl'},'Settings'))));
+}
+/* ---- browse ---- */
+function renderBrowse(m){
+  setTitle('Browse');
+  const st=App.browse;
+  const list=el('div');
+  const search=el('input',{type:'search',placeholder:'Search activities…',value:st.q,
+    oninput:debounce(()=>{st.q=search.value;drawList();},200)});
+  m.append(search);
+  const cats=[...new Set(App.data.activities.map(a=>a.category))];
+  const catRow=el('div',{class:'chiprow'});
+  for(const c of cats){
+    const meta=catMeta(c);
+    catRow.append(el('button',{class:'chip'+(st.cat===c?' on':''),onclick:e=>{
+      st.cat=st.cat===c?null:c;renderView(App.stack[App.stack.length-1]);
+    }},meta.emoji+' '+meta.label));
+  }
+  m.append(catRow);
+  const allTags=[...new Set(App.data.activities.flatMap(a=>a.tags))].sort();
+  const tagRow=el('div',{class:'chiprow'});
+  for(const t of allTags){
+    tagRow.append(el('button',{class:'chip'+(st.tags.includes(t)?' on':''),onclick:()=>{
+      st.tags=st.tags.includes(t)?st.tags.filter(x=>x!==t):[...st.tags,t];
+      renderView(App.stack[App.stack.length-1]);
+    }},t));
+  }
+  tagRow.append(
+    el('button',{class:'chip'+(st.allAges?' on':''),onclick:()=>{st.allAges=!st.allAges;renderView(App.stack[App.stack.length-1]);}},'All ages'),
+    el('button',{class:'chip'+(st.showRetired?' on':''),onclick:()=>{st.showRetired=!st.showRetired;renderView(App.stack[App.stack.length-1]);}},'Retired'));
+  m.append(tagRow,list);
+  function drawList(){
+    list.innerHTML='';
+    const q=st.q.trim().toLowerCase();
+    let items=App.data.activities.filter(a=>{
+      if(!st.showRetired&&a.retired)return false;
+      if(!st.allAges&&!isAgeAppropriate(a))return false;
+      if(st.cat&&a.category!==st.cat)return false;
+      if(st.tags.length&&!st.tags.every(t=>a.tags.includes(t)))return false;
+      if(q&&!(a.name.toLowerCase().includes(q)||a.description.toLowerCase().includes(q)))return false;
+      return true;
+    });
+    items.sort((a,b)=>a.name.localeCompare(b.name));
+    if(!items.length){
+      list.append(el('div',{class:'empty'},el('div',{class:'ee'},'\u{1FAE3}'),
+        'Nothing matches. Try clearing a filter, or switch on “All ages”.'));
+      return;
+    }
+    const hidden=App.data.activities.filter(a=>!a.retired&&!isAgeAppropriate(a)).length;
+    list.append(el('div',{class:'small faint',style:'margin:4px 0 10px'},
+      items.length+' activit'+(items.length===1?'y':'ies')+
+      (!st.allAges&&hidden?' · '+hidden+' hidden by age filter':'')));
+    for(const a of items){
+      const meta=catMeta(a.category);
+      list.append(el('button',{class:'card tap acard'+(a.retired?' is-retired':''),onclick:()=>nav('activity',{id:a.id,ctx:'browse'})},
+        el('div',{class:'nm'},a.name),
+        el('div',{class:'meta'},
+          el('span',{class:'catchip'},meta.emoji+' '+meta.label),
+          el('span',null,'~'+expectedDuration(a)+' min'),
+          el('span',null,a.ageRange.minMonths+'–'+a.ageRange.maxMonths+' mo'),
+          a.flagged?el('span',{class:'bflag'},'\u{1F6A9} flagged'):null,
+          a.retired?el('span',{class:'bretired'},'retired'):null)));
+    }
+  }
+  drawList();
+}
+/* ---- activity (detail + session) ---- */
+function renderActivity(m,p){
+  const a=A(p.id);
+  if(!a){goHome();return;}
+  const ctx=p.ctx||'browse';
+  setTitle(catMeta(a.category).label);
+  $('#tbRight').append(el('button',{class:'ghost small',onclick:()=>nav('editor',{id:a.id})},'Edit'));
+  App.sessionStart=Date.now();
+  if(ctx==='itinerary'||ctx==='random'){
+    App.wantWakeLock=true;
+    requestWakeLock();
+  }
+  const wrap=el('div',{class:'actwrap'+(ctx==='itinerary'?' itin':'')});
+  const it=App.data.itinerary;
+  if(ctx==='itinerary'&&it){
+    const dots=el('div',{class:'dots'});
+    it.items.forEach((item,i)=>{
+      dots.append(el('div',{class:'dot'+(i===it.pos?' cur':item.status!=='pending'?' done':'')}));
+    });
+    wrap.append(el('div',{class:'itinbar'},
+      el('span',null,'Activity '+(it.pos+1)+' of '+it.items.length),
+      el('div',{class:'spacer'}),dots));
+  }
+  const exp=expectedDuration(a);
+  const meta=catMeta(a.category);
+  wrap.append(el('div',{class:'acthead'},
+    el('div',null,el('span',{class:'catchip'},meta.emoji+' '+meta.label)),
+    el('h1',null,a.name)));
+  const metaRow=el('div',{class:'actmeta'},
+    el('span',null,'⏱️ ',el('b',null,'~'+exp+' min'),
+      exp!==a.baseDuration?el('span',{class:'faint'},' (planned '+a.baseDuration+')'):null),
+    el('span',null,'\u{1F476} ',el('b',null,a.ageRange.minMonths+'–'+a.ageRange.maxMonths+' months')));
+  wrap.append(metaRow);
+  if(a.tags.length)wrap.append(el('div',{class:'row',style:'margin-top:8px'},
+    a.tags.map(t=>el('span',{class:'tagchip'},t))));
+  if(a.flagged)wrap.append(el('div',{class:'flagnote'},
+    '\u{1F6A9} This activity is flagged after a few tough runs. It’s excluded from random picks and itineraries until you review it.'));
+  if(!isAgeAppropriate(a))wrap.append(el('div',{class:'flagnote'},
+    '\u{1F476} Outside bub’s current age range — shown because you browsed to it.'));
+  wrap.append(el('div',{class:'actdesc'},a.description));
+  if(a.history.length){
+    const recent=a.history.slice(-3).reverse();
+    wrap.append(el('div',{class:'small faint',style:'margin-top:18px'},
+      'Recently: '+recent.map(h=>fmtDate(h.at)+' · '+h.engagedMinutes+' min '+(h.wentWell?'\u{1F642}':'\u{1F615}')).join('  •  ')));
+  }
+  m.append(wrap);
+  /* action bar */
+  const mainRow=el('div',{class:'mainrow'},
+    el('button',{class:'primary',onclick:()=>completeActivity(a,ctx)},'✔ Mark completed'));
+  const bar=el('div',{class:'actionbar'},el('div',{class:'inner'},mainRow));
+  if(ctx==='itinerary'&&it){
+    mainRow.append(el('button',{onclick:()=>advanceItinerary('skipped'),style:'min-height:56px'},'Skip'));
+    bar.querySelector('.inner').append(
+      el('button',{class:'ghost small',style:'color:var(--danger)',onclick:async()=>{
+        if(await confirmDlg('Abandon this itinerary?\nCompleted activities keep their records.',{danger:true,okText:'Abandon'})){
+          App.data.itinerary=null;touch();goHome();
+        }
+      }},'Abandon itinerary'));
+  }else if(ctx==='random'){
+    mainRow.append(el('button',{style:'min-height:56px',onclick:()=>{
+      const nxt=pickRandomActivity(a.id);
+      if(!nxt){toast('No other activities available');return;}
+      nav('activity',{id:nxt.id,ctx:'random'},true);
+    }},'\u{1F3B2} Another'));
+  }
+  m.append(bar);
+}
+/* ---- completion flow ---- */
+function askEngagedMinutes(a){
+  return new Promise(res=>{
+    const elapsed=App.sessionStart?Math.round((Date.now()-App.sessionStart)/60000):0;
+    const start=elapsed>=1&&elapsed<=120?elapsed:expectedDuration(a);
+    const inp=el('input',{type:'number',inputmode:'numeric',min:0,max:600,value:start});
+    const bump=d=>{const v=Math.max(0,Math.min(600,(+inp.value||0)+d));inp.value=v;};
+    showModal(el('div',{class:'modal'},
+      el('h2',null,'How long was bub engaged?'),
+      el('div',{class:'dim small'},a.name),
+      el('div',{class:'stepper'},
+        el('button',{onclick:()=>bump(-1)},'−'),
+        inp,
+        el('button',{onclick:()=>bump(1)},'+')),
+      el('div',{class:'small faint',style:'text-align:center'},'minutes'),
+      el('div',{class:'mbtns'},
+        el('button',{onclick:()=>{closeModal();res(null);}},'Cancel'),
+        el('button',{class:'primary',onclick:()=>{
+          const v=+inp.value;
+          if(!isFinite(v)||v<0){toast('Enter the minutes bub was engaged','err');return;}
+          closeModal();res(Math.min(600,Math.round(v)));
+        }},'Next'))),
+      ()=>res(null));
+  });
+}
+function askWentWell(a){
+  return new Promise(res=>{
+    showModal(el('div',{class:'modal'},
+      el('h2',null,'How did it go?'),
+      el('div',{class:'dim small'},a.name),
+      el('div',{class:'feelbtns'},
+        el('button',{class:'good',onclick:()=>{closeModal();res(true);}},
+          el('div',{class:'fe'},'\u{1F60A}'),'Went well'),
+        el('button',{class:'poor',onclick:()=>{closeModal();res(false);}},
+          el('div',{class:'fe'},'\u{1F615}'),'Went poorly')),
+      el('div',{class:'mbtns'},
+        el('button',{class:'ghost',onclick:()=>{closeModal();res(null);}},'Cancel'))),
+      ()=>res(null));
+  });
+}
+async function completeActivity(a,ctx){
+  if(App.completing)return;
+  App.completing=true;
+  try{
+    const mins=await askEngagedMinutes(a);
+    if(mins==null)return;
+    const well=await askWentWell(a);
+    if(well==null)return;
+    const newlyFlagged=recordCompletion(a,mins,well);
+    if(newlyFlagged)toast('\u{1F6A9} '+a.name+' flagged after three tough runs — it’s waiting in the Review inbox');
+    else toast(well?'Logged — nice one \u{1F389}':'Logged — they can’t all be winners');
+    if(ctx==='itinerary'&&App.data.itinerary){
+      const it=App.data.itinerary;
+      it.items[it.pos].engagedMinutes=mins;
+      advanceItinerary('done');
+    }else{
+      renderView(App.stack[App.stack.length-1]);
+    }
+  }finally{App.completing=false;}
+}
+function advanceItinerary(status){
+  const it=App.data.itinerary;
+  if(!it)return;
+  const t=Date.now();
+  if(App.lastAdvance&&t-App.lastAdvance<450)return; /* debounce double taps on Skip */
+  App.lastAdvance=t;
+  it.items[it.pos].status=status;
+  let next=-1;
+  for(let i=0;i<it.items.length;i++){
+    if(it.items[i].status==='pending'){next=i;break;}
+  }
+  if(next===-1){
+    const summary={
+      total:it.items.length,
+      done:it.items.filter(i=>i.status==='done').length,
+      skipped:it.items.filter(i=>i.status==='skipped').length,
+      engaged:it.items.reduce((s,i)=>s+(i.engagedMinutes||0),0),
+      names:it.items.map(i=>({name:(A(i.activityId)||{}).name||'?',status:i.status}))
+    };
+    App.data.itinerary=null;
+    touch();
+    nav('itineraryDone',{summary},true);
+  }else{
+    it.pos=next;
+    touch();
+    nav('activity',{id:it.items[next].activityId,ctx:'itinerary'},true);
+  }
+}
+/* ---- itinerary setup ---- */
+function renderItinerarySetup(m){
+  setTitle('Build an itinerary');
+  let preview=null;
+  const presets=[15,30,45,60];
+  const custom=el('input',{type:'number',inputmode:'numeric',min:5,max:240,placeholder:'Custom',style:'width:110px'});
+  const chips=el('div',{class:'qchips'});
+  let target=30;
+  function setTarget(t,fromCustom){
+    target=t;
+    if(!fromCustom)custom.value='';
+    [...chips.children].forEach(c=>c.classList.toggle('on',+c.dataset.v===t&&!fromCustom));
+  }
+  for(const p of presets){
+    chips.append(el('button',{class:'chip'+(p===30?' on':''),'data-v':p,onclick:()=>setTarget(p)},p+' min'));
+  }
+  custom.addEventListener('input',()=>{if(+custom.value>0)setTarget(+custom.value,true);});
+  const out=el('div');
+  function build(){
+    const t=Math.max(5,Math.min(240,target||30));
+    preview=buildItinerary(t);
+    out.innerHTML='';
+    if(preview.note)out.append(el('div',{class:'flagnote'},preview.note));
+    if(!preview.items.length)return;
+    out.append(el('div',{class:'itintotal'},
+      preview.items.length+' activities · ~'+itineraryTotal(preview.items)+' min total'));
+    for(const a of preview.items){
+      out.append(el('div',{class:'card itin-item'},
+        el('div',{class:'mins'},expectedDuration(a)+' min'),
+        el('div',null,el('div',{style:'font-weight:650'},a.name),
+          el('div',{class:'small dim'},catMeta(a.category).emoji+' '+catMeta(a.category).label))));
+    }
+    out.append(el('div',{class:'row',style:'margin-top:12px'},
+      el('button',{style:'flex:1',onclick:build},'\u{1F500} Shuffle again'),
+      el('button',{class:'primary',style:'flex:1',onclick:()=>{
+        App.data.itinerary={
+          createdAt:App.now().toISOString(),
+          targetMinutes:target,
+          items:preview.items.map(a=>({activityId:a.id,status:'pending',engagedMinutes:null})),
+          pos:0
+        };
+        touch();
+        nav('activity',{id:preview.items[0].id,ctx:'itinerary'});
+      }},'▶ Start')));
+  }
+  m.append(
+    el('p',{class:'dim'},'How long do you need to fill?'),
+    chips,
+    el('div',{class:'row'},custom,el('span',{class:'dim'},'minutes')),
+    el('button',{class:'primary',style:'width:100%;margin:16px 0;min-height:56px',onclick:build},'Build itinerary'),
+    out);
+}
+function renderItineraryDone(m,p){
+  setTitle('Itinerary finished');
+  const s=p.summary||{total:0,done:0,skipped:0,engaged:0,names:[]};
+  m.append(
+    el('div',{class:'empty',style:'padding-bottom:10px'},
+      el('div',{class:'ee'},'\u{1F389}'),
+      el('h2',null,'All done!')),
+    el('div',{class:'card'},
+      el('div',{class:'sumline'},el('span',null,'Completed'),el('b',null,s.done+' of '+s.total)),
+      s.skipped?el('div',{class:'sumline'},el('span',null,'Skipped'),el('b',null,s.skipped)):null,
+      el('div',{class:'sumline'},el('span',null,'Bub engaged for'),el('b',null,'~'+s.engaged+' min'))),
+    el('div',{class:'card'},
+      s.names.map(n=>el('div',{class:'sumline'},
+        el('span',null,n.name),
+        el('span',{class:n.status==='done'?'dim':'faint'},n.status==='done'?'✔ done':'skipped')))),
+    el('button',{class:'primary',style:'width:100%;margin-top:14px;min-height:56px',onclick:goHome},'Back to home'));
+}
+/* ---- review inbox ---- */
+function renderReview(m){
+  setTitle('Review inbox');
+  const flagged=App.data.activities.filter(a=>a.flagged);
+  if(!flagged.length){
+    m.append(el('div',{class:'empty'},el('div',{class:'ee'},'\u{1F389}'),'Nothing needs review.'));
+  }else{
+    m.append(el('p',{class:'dim'},'These went poorly three times in a row. Have a think: wrong time of day, outgrown, or just a rough patch?'));
+    for(const a of flagged){
+      const recent=a.history.slice(-3);
+      m.append(el('div',{class:'card'},
+        el('div',{class:'nm',style:'font-weight:700'},a.name),
+        el('div',{class:'small dim'},catMeta(a.category).emoji+' '+catMeta(a.category).label+' · ~'+expectedDuration(a)+' min'),
+        el('div',{class:'hist3'},recent.map(h=>
+          el('span',{class:'hdot '+(h.wentWell?'good':'poor')},fmtDate(h.at)+' '+(h.wentWell?'\u{1F642}':'\u{1F615}')))),
+        el('div',{class:'revbtns'},
+          el('button',{class:'primary',onclick:()=>{
+            a.flagged=false;a.lastReviewedAt=App.now().toISOString();touch();
+            toast('Back in the rotation');
+            renderView(App.stack[App.stack.length-1]);
+          }},'Keep it'),
+          el('button',{onclick:()=>nav('editor',{id:a.id})},'Edit'),
+          el('button',{class:'danger',onclick:()=>{
+            a.retired=true;a.flagged=false;a.lastReviewedAt=App.now().toISOString();touch();
+            toast('Retired — restore it any time from here');
+            renderView(App.stack[App.stack.length-1]);
+          }},'Retire'))));
+    }
+  }
+  const retired=App.data.activities.filter(a=>a.retired);
+  if(retired.length){
+    m.append(el('h3',{style:'margin-top:26px;font-size:14px;text-transform:uppercase;letter-spacing:.07em;color:var(--fg-faint)'},'Retired ('+retired.length+')'));
+    for(const a of retired){
+      m.append(el('div',{class:'card row'},
+        el('div',{style:'flex:1'},el('div',{style:'font-weight:650;color:var(--fg-dim)'},a.name)),
+        el('button',{class:'small',onclick:()=>{
+          a.retired=false;touch();toast('Restored');
+          renderView(App.stack[App.stack.length-1]);
+        }},'Restore')));
+    }
+  }
+}
+/* ---- editor ---- */
+function renderEditor(m,p){
+  const existing=p.id?A(p.id):null;
+  setTitle(existing?'Edit activity':'New activity');
+  const a=existing||{name:'',description:'',category:'sensory',
+    ageRange:{minMonths:Math.max(0,Math.floor((ageMonths()||3))-1),maxMonths:Math.floor((ageMonths()||3))+3},
+    baseDuration:5,tags:[],retired:false};
+  const fName=el('input',{type:'text',value:a.name,placeholder:'e.g. Sock puppet chat'});
+  const cats=[...new Set([...Object.keys(CATEGORY_META),...App.data.activities.map(x=>x.category)])];
+  const fCat=el('input',{type:'text',value:a.category,list:'catlist'});
+  const dl=el('datalist',{id:'catlist'},cats.map(c=>el('option',{value:c})));
+  const fDesc=el('textarea',{rows:6,placeholder:'What to do, what to watch for…'},a.description);
+  const fMin=el('input',{type:'number',inputmode:'numeric',min:0,max:60,value:a.ageRange.minMonths});
+  const fMax=el('input',{type:'number',inputmode:'numeric',min:0,max:60,value:a.ageRange.maxMonths});
+  const fDur=el('input',{type:'number',inputmode:'numeric',min:1,max:120,value:a.baseDuration});
+  const fTags=el('input',{type:'text',value:a.tags.join(', '),placeholder:'quiet, props, wind-down'});
+  const fRetired=existing?el('input',{type:'checkbox',checked:a.retired,style:'width:auto;min-height:auto'}):null;
+  m.append(
+    el('label',null,'Name'),fName,
+    el('label',null,'Category'),fCat,dl,
+    el('label',null,'Description'),fDesc,
+    el('label',null,'Age range (months)'),
+    el('div',{class:'agerow'},fMin,el('span',{class:'dim'},'to'),fMax),
+    el('label',null,'Planned duration (minutes)'),fDur,
+    el('label',null,'Tags (comma-separated)'),fTags);
+  if(existing){
+    m.append(el('div',{class:'setrow',style:'margin-top:14px'},fRetired,
+      el('span',null,'Retired (hidden from picks and browse)')));
+    if(existing.history.length){
+      m.append(el('div',{class:'small faint',style:'margin-top:10px'},
+        existing.history.length+' completions recorded · learnt duration ~'+expectedDuration(existing)+' min'),
+        el('button',{class:'small danger',style:'margin-top:8px',onclick:async()=>{
+          if(await confirmDlg('Clear this activity’s history?\n\nResets the learnt duration back to the planned '+existing.baseDuration+' min and clears any feedback streak.',{danger:true,okText:'Clear history'})){
+            existing.history=[];existing.flagged=false;existing.lastReviewedAt=null;touch();
+            toast('History cleared');
+            renderView(App.stack[App.stack.length-1]);
+          }
+        }},'Clear history'));
+    }
+  }
+  const foot=el('div',{class:'formfoot'});
+  foot.append(el('button',{class:'primary',onclick:()=>{
+    const name=fName.value.trim();
+    if(!name){toast('Give it a name','err');return;}
+    const lo=clampNum(fMin.value,0,60,0),hi=clampNum(fMax.value,0,60,12);
+    if(hi<lo){toast('Age range is upside down','err');return;}
+    const vals={
+      name,category:fCat.value.trim()||'other',description:fDesc.value,
+      ageRange:{minMonths:lo,maxMonths:hi},
+      baseDuration:clampNum(fDur.value,1,120,5),
+      tags:fTags.value.split(',').map(t=>t.trim()).filter(Boolean)
+    };
+    if(existing){
+      const authoredChanged=!existing.custom&&(
+        existing.name!==vals.name||existing.description!==vals.description||
+        existing.category!==vals.category||existing.baseDuration!==vals.baseDuration||
+        existing.ageRange.minMonths!==lo||existing.ageRange.maxMonths!==hi||
+        existing.tags.join(',')!==vals.tags.join(','));
+      Object.assign(existing,vals);
+      if(authoredChanged)existing.modified=true;
+      if(fRetired)existing.retired=fRetired.checked;
+      touch();toast('Saved');
+      goBack();
+    }else{
+      App.data.activities.push(Object.assign({id:uid(),flagged:false,retired:false,
+        custom:true,modified:false,lastReviewedAt:null,history:[]},vals));
+      touch();toast('Added — it’s in the bank');
+      goBack();
+    }
+  }},'Save'));
+  if(existing&&existing.custom){
+    foot.append(el('button',{class:'danger',onclick:async()=>{
+      if(await confirmDlg('Delete “'+existing.name+'” for good?\nIts history goes with it.',{danger:true,okText:'Delete'})){
+        App.data.activities=App.data.activities.filter(x=>x.id!==existing.id);
+        const it=App.data.itinerary;
+        if(it){
+          /* drop the deleted activity from any itinerary in progress */
+          it.items=it.items.filter(i=>i.activityId!==existing.id);
+          const next=it.items.findIndex(i=>i.status==='pending');
+          if(next===-1)App.data.itinerary=null;else it.pos=next;
+        }
+        touch();toast('Deleted');
+        goHome();
+      }
+    }},'Delete'));
+  }
+  m.append(foot);
+  if(existing&&!existing.custom)m.append(el('p',{class:'small faint',style:'margin-top:14px'},
+    'This is a built-in activity — it can be edited or retired, but not deleted.'));
+}
+/* ---- settings ---- */
+function renderSettings(m){
+  setTitle('Settings');
+  /* bub */
+  const dob=el('input',{type:'date',value:App.data.settings.birthDate||'',max:localToday()});
+  const sec1=el('div',{class:'setsec'},
+    el('h3',null,'Bub'),
+    el('label',{style:'margin-top:0'},'Date of birth'),dob,
+    el('button',{class:'small',style:'margin-top:10px',onclick:()=>{
+      if(!dob.value){toast('Pick a date first','err');return;}
+      App.data.settings.birthDate=dob.value;touch();
+      toast('Saved — bub is '+ageLabel());
+    }},'Save date'));
+  /* appearance */
+  const theme=document.documentElement.dataset.theme;
+  const sec2=el('div',{class:'setsec'},
+    el('h3',null,'Appearance'),
+    el('button',{onclick:()=>{
+      const t=document.documentElement.dataset.theme==='dark'?'light':'dark';
+      document.documentElement.dataset.theme=t;
+      try{localStorage.setItem('bt-theme',t);}catch(e){}
+      const tm=document.querySelector('meta[name=theme-color]');
+      if(tm)tm.setAttribute('content',t==='dark'?'#121014':'#faf5ef');
+      renderView(App.stack[App.stack.length-1]);
+    }},(theme==='dark'?'☀️ Switch to light mode':'\u{1F319} Switch to dark mode')));
+  /* data */
+  const importInput=el('input',{type:'file',accept:'.json,application/json',style:'display:none',onchange:async e=>{
+    const f=e.target.files[0];
+    e.target.value='';
+    if(!f)return;
+    try{
+      const text=await f.text();
+      const d=normalize(JSON.parse(text));
+      mergeSeeds(d); /* an older backup still gets newer seed activities */
+      if(await confirmDlg('Replace ALL current data with this backup?\n\nActivities, history and settings will be overwritten.',{danger:true,okText:'Replace'})){
+        App.data=d;
+        schedulePersist.now();
+        toast('Backup restored');
+        resetStack(App.data.settings.birthDate?'home':'onboarding');
+      }
+    }catch(err){toast('That file isn’t a Baby Time backup','err');}
+  }});
+  const sec3=el('div',{class:'setsec'},
+    el('h3',null,'Data'),
+    el('div',{class:'row'},
+      el('button',{style:'flex:1',onclick:()=>{
+        const blob=new Blob([JSON.stringify(App.data,null,1)],{type:'application/json'});
+        const u=URL.createObjectURL(blob);
+        const aEl=el('a',{href:u,download:'baby-time-backup-'+localToday()+'.json'});
+        document.body.append(aEl);aEl.click();aEl.remove();
+        setTimeout(()=>URL.revokeObjectURL(u),4000);
+        toast('Backup downloaded');
+      }},'⬇ Export backup'),
+      el('button',{style:'flex:1',onclick:()=>importInput.click()},'⬆ Import backup')),
+    importInput,
+    el('p',{class:'small faint'},'Everything lives on this device only. Export now and then and stash the file in your cloud drive.'));
+  /* install */
+  const sec4=el('div',{class:'setsec'},el('h3',null,'App'));
+  const standalone=window.matchMedia&&matchMedia('(display-mode: standalone)').matches;
+  const ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  if(standalone){
+    sec4.append(el('p',{class:'small faint',style:'margin:0'},'Installed and ready — you’re using the app.'));
+  }else if(App.installPrompt){
+    sec4.append(el('button',{onclick:()=>{
+      const p=App.installPrompt;
+      App.installPrompt=null; /* the prompt event is single-use */
+      p.prompt();
+      renderView(App.stack[App.stack.length-1]);
+    }},'\u{1F4F2} Install as app'));
+  }else if(ios){
+    sec4.append(el('p',{class:'small faint',style:'margin:0'},
+      'To install on iPhone/iPad: tap the Share button, then “Add to Home Screen”.'));
+  }else{
+    sec4.append(el('p',{class:'small faint',style:'margin:0'},
+      'To install: open this page in Chrome, then menu ⋮ → “Add to home screen”.'));
+  }
+  /* danger */
+  const sec5=el('div',{class:'setsec'},
+    el('h3',null,'Danger zone'),
+    el('button',{class:'danger',onclick:async()=>{
+      if(!await confirmDlg('Erase ALL data?\n\nEvery activity, all history, and bub’s details.',{danger:true,okText:'Erase'}))return;
+      if(!await confirmDlg('Really sure? There’s no undo (unless you exported a backup).',{danger:true,okText:'Erase everything'}))return;
+      await store.del('data');await store.del('backup');
+      App.data=seedData();
+      schedulePersist.now();
+      toast('Fresh start');
+      resetStack('onboarding');
+    }},'Erase all data'),
+    el('p',{class:'small faint'},'Baby Time v1 · data format v'+App.data.version+' · seed set v'+App.data.seedVersion));
+  m.append(sec1,sec2,sec3,sec4,sec5);
+  /* dev panel — localhost only */
+  if(location.hostname==='localhost'||location.hostname==='127.0.0.1'){
+    const off=el('input',{type:'number',inputmode:'numeric',value:Math.round(App.nowOffsetMs/86400000),style:'width:90px'});
+    m.append(el('div',{class:'devpanel'},
+      el('h3',{style:'margin-top:0;font-size:14px'},'\u{1F6E0} Dev panel (localhost only)'),
+      el('div',{class:'row'},
+        el('span',{class:'small dim'},'Clock shift (days):'),off,
+        el('button',{class:'small',onclick:()=>{
+          App.nowOffsetMs=(+off.value||0)*86400000;
+          toast('Clock shifted — bub is now '+ageLabel());
+          renderView(App.stack[App.stack.length-1]);
+        }},'Apply')),
+      el('div',{class:'row',style:'margin-top:10px'},
+        el('button',{class:'small',onclick:()=>{devSeedHistory();toast('Sample history written');}},'Seed sample history'),
+        el('button',{class:'small',onclick:()=>{
+          const r=buildItinerary(30,mulberry32(42));
+          console.log('Seeded 30-min itinerary:',r.items.map(a=>a.id),r.note);
+          toast('Seeded itinerary logged to console');
+        }},'Log seeded itinerary'))));
+  }
+}
+function mulberry32(seed){let t=seed;return function(){t|=0;t=(t+0x6D2B79F5)|0;let r=Math.imul(t^(t>>>15),1|t);r=(r+Math.imul(r^(r>>>7),61|r))^r;return((r^(r>>>14))>>>0)/4294967296;};}
+function devSeedHistory(){
+  const rng=mulberry32(7);
+  const acts=App.data.activities.filter(a=>!a.custom).slice(0,15);
+  acts.forEach((a,idx)=>{
+    a.history=[];a.flagged=false;a.lastReviewedAt=null;
+    const n=2+Math.floor(rng()*6);
+    for(let i=n;i>0;i--){
+      const at=new Date(App.now()-i*86400000-Math.floor(rng()*4)*3600000);
+      a.history.push({at:at.toISOString(),
+        engagedMinutes:Math.max(1,Math.round(a.baseDuration*(0.5+rng()))),
+        wentWell:rng()>0.25});
+    }
+  });
+  /* one guaranteed 3-poor streak for testing the flag flow */
+  const victim=acts[2];
+  if(victim){
+    for(let i=3;i>0;i--){
+      victim.history.push({at:new Date(App.now()-i*3600000).toISOString(),
+        engagedMinutes:2,wentWell:false});
+    }
+    if(poorStreak(victim)>=3)victim.flagged=true;
+  }
+  touch();
+}
+/* ============================= INIT ============================= */
+async function init(){
+  const secure=location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1';
+  if(secure){
+    if(!document.querySelector('link[rel=manifest]'))
+      document.head.append(el('link',{rel:'manifest',href:'manifest.webmanifest'}));
+    if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+  }
+  window.addEventListener('beforeinstallprompt',e=>{
+    e.preventDefault();
+    App.installPrompt=e;
+    try{
+      if(!localStorage.getItem('bt-install-hint')){
+        localStorage.setItem('bt-install-hint','1');
+        toast('Tip: install Baby Time as an app from Settings');
+      }
+    }catch(err){}
+  });
+  window.addEventListener('appinstalled',()=>{App.installPrompt=null;toast('Installed — it’s on your home screen');});
+  $('#tbBack').addEventListener('click',goBack);
+  $('#modalWrap').addEventListener('click',e=>{if(e.target.id==='modalWrap')cancelModal();});
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&modalState.open)cancelModal();
+  });
+  /* flush pending writes when the app is backgrounded; re-acquire the wake
+     lock when it returns (the UA auto-releases it on hide) */
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='hidden')schedulePersist.now();
+    else if(document.visibilityState==='visible')requestWakeLock();
+  });
+  window.addEventListener('pagehide',()=>schedulePersist.now());
+  await store.init();
+  const rec=await store.get('data');
+  let primaryOk=false;
+  if(rec&&rec.json){
+    try{App.data=normalize(JSON.parse(rec.json));primaryOk=true;}
+    catch(e){
+      console.warn('primary data unreadable',e);
+      const bak=await store.get('backup');
+      if(bak&&bak.json){
+        try{
+          App.data=normalize(JSON.parse(bak.json));
+          toast('Restored from the daily backup','err');
+          schedulePersist.now(); /* re-persist the good copy straight away */
+        }catch(e2){}
+      }
+    }
+  }
+  if(!App.data)App.data=seedData();
+  else if(mergeSeeds(App.data)){touch();}
+  /* once-a-day rolling backup — only ever of a state that parsed cleanly */
+  if(primaryOk){
+    const bak=await store.get('backup');
+    const dayOf=t=>{const d=new Date(t);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');};
+    if(!bak||dayOf(bak.time)!==localToday()){
+      await store.set('backup',{time:Date.now(),json:rec.json});
+    }
+  }
+  const first={view:App.data.settings.birthDate?'home':'onboarding',params:{}};
+  App.stack=[first];
+  history.replaceState({d:0},'');
+  renderView(first);
+}
+init();
+</script>
+</body>
+</html>
