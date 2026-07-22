@@ -14,7 +14,7 @@ try{
   if(!t)t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
   document.documentElement.dataset.theme=t;
   var tm=document.querySelector('meta[name=theme-color]');
-  if(tm)tm.setAttribute('content',t==='dark'?'#121014':'#faf5ef');
+  if(tm)tm.setAttribute('content',t==='dark'?'#121014':(t==='pastel'?'#f3eefa':'#faf5ef'));
 }catch(e){}
 </script>
 <style>
@@ -33,6 +33,18 @@ try{
   --mono:ui-monospace,Consolas,'Cascadia Mono',monospace;
 }
 html[data-theme="dark"]{color-scheme:dark}
+/* Pastel theme: soft lavender/rose surfaces, dark plum text (kept at WCAG AA) */
+html[data-theme="pastel"] body{
+  --bg:#f3eefa; --bg2:#fdfbff; --bg3:#e9e0f3; --bg4:#ded1ec;
+  --fg:#3a3344; --fg-dim:#6f6580; --fg-faint:#766b88;
+  --border:#ddd2ec; --border2:#c3b4dc;
+  --accent:#f4b8c8; --accent-soft:#f4b8c83d; --accent-fg:#4a1f2e;
+  --teal:#35786a; --teal-soft:#7fd6c226;
+  --danger:#b8506d; --danger-soft:#b8506d14;
+  --warn:#8a6212; --warn-soft:#e8c96e2e;
+  --ok:#468655; --ok-soft:#8fd6a02e;
+  --sel:#f4b8c833; --shadow:0 6px 24px rgba(122,92,146,.18);
+}
 html[data-theme="dark"] body{
   --bg:#121014; --bg2:#1a171c; --bg3:#282329; --bg4:#383239;
   --fg:#f4f0ea; --fg-dim:#c8c2ba; --fg-faint:#948d84;
@@ -238,6 +250,14 @@ function fmtDate(iso){const d=new Date(iso);return d.toLocaleDateString(undefine
 function localToday(){
   const d=new Date();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+const THEME_COLORS={light:'#faf5ef',dark:'#121014',pastel:'#f3eefa'};
+function setTheme(t){
+  document.documentElement.dataset.theme=t;
+  try{localStorage.setItem('bt-theme',t);}catch(e){}
+  const tm=document.querySelector('meta[name=theme-color]');
+  if(tm)tm.setAttribute('content',THEME_COLORS[t]||THEME_COLORS.light);
+  renderView(App.stack[App.stack.length-1]);
 }
 /* Modal system.
    Modals never create history entries; a Back press with a modal open cancels
@@ -1256,17 +1276,13 @@ function renderSettings(m){
       toast('Saved — bub is '+ageLabel());
     }},'Save date'));
   /* appearance */
-  const theme=document.documentElement.dataset.theme;
+  const themeNow=document.documentElement.dataset.theme;
+  const THEME_CHOICES=[['light','☀️ Light'],['dark','\u{1F319} Dark'],['pastel','\u{1F338} Pastel']];
   const sec2=el('div',{class:'setsec'},
     el('h3',null,'Appearance'),
-    el('button',{onclick:()=>{
-      const t=document.documentElement.dataset.theme==='dark'?'light':'dark';
-      document.documentElement.dataset.theme=t;
-      try{localStorage.setItem('bt-theme',t);}catch(e){}
-      const tm=document.querySelector('meta[name=theme-color]');
-      if(tm)tm.setAttribute('content',t==='dark'?'#121014':'#faf5ef');
-      renderView(App.stack[App.stack.length-1]);
-    }},(theme==='dark'?'☀️ Switch to light mode':'\u{1F319} Switch to dark mode')));
+    el('div',{class:'row'},THEME_CHOICES.map(([id,label])=>
+      el('button',{class:themeNow===id?'primary':'',style:'flex:1','aria-pressed':themeNow===id?'true':'false',
+        onclick:()=>setTheme(id)},label))));
   /* data */
   const importInput=el('input',{type:'file',accept:'.json,application/json',style:'display:none',onchange:async e=>{
     const f=e.target.files[0];
