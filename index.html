@@ -102,6 +102,7 @@ button.card{display:block;width:100%;text-align:left;font:inherit}
   min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 5px}
 .resume{border:2px solid var(--accent);background:var(--accent-soft)}
 /* ---- chips ---- */
+.chipwrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .chiprow{display:flex;gap:8px;overflow-x:auto;padding:2px 0 8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .chiprow::-webkit-scrollbar{display:none}
 .chip{flex:none;font-size:14px;padding:9px 15px;min-height:44px;border-radius:22px;background:var(--bg2);border:1px solid var(--border);white-space:nowrap}
@@ -1147,6 +1148,24 @@ function renderEditor(m,p){
   const fMax=el('input',{type:'number',inputmode:'numeric',min:0,max:60,value:a.ageRange.maxMonths});
   const fDur=el('input',{type:'number',inputmode:'numeric',min:1,max:120,value:a.baseDuration});
   const fTags=el('input',{type:'text',value:a.tags.join(', '),placeholder:'quiet, props, wind-down'});
+  /* every tag already in the bank, tap-to-toggle — no guessing what exists */
+  const allTags=[...new Set(App.data.activities.flatMap(x=>x.tags))].sort();
+  const parseTags=()=>fTags.value.split(',').map(t=>t.trim()).filter(Boolean);
+  const tagWrap=el('div',{class:'chipwrap'});
+  function drawTagChips(){
+    tagWrap.innerHTML='';
+    const cur=parseTags();
+    for(const t of allTags){
+      tagWrap.append(el('button',{class:'chip'+(cur.includes(t)?' on':''),onclick:()=>{
+        let list=parseTags();
+        if(list.includes(t))list=list.filter(x=>x!==t);else list.push(t);
+        fTags.value=list.join(', ');
+        drawTagChips();
+      }},t));
+    }
+  }
+  drawTagChips();
+  fTags.addEventListener('input',debounce(drawTagChips,200));
   const fRetired=existing?el('input',{type:'checkbox',checked:a.retired,style:'width:auto;min-height:auto'}):null;
   m.append(
     el('label',null,'Name'),fName,
@@ -1155,7 +1174,9 @@ function renderEditor(m,p){
     el('label',null,'Age range (months)'),
     el('div',{class:'agerow'},fMin,el('span',{class:'dim'},'to'),fMax),
     el('label',null,'Planned duration (minutes)'),fDur,
-    el('label',null,'Tags (comma-separated)'),fTags);
+    el('label',null,'Tags (comma-separated)'),fTags,
+    allTags.length?el('div',{class:'small faint',style:'margin-top:8px'},'Tap to toggle an existing tag, or type new ones above:'):null,
+    tagWrap);
   if(existing){
     m.append(el('div',{class:'setrow',style:'margin-top:14px'},fRetired,
       el('span',null,'Retired (hidden from picks and browse)')));
