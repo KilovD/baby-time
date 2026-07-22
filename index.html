@@ -325,11 +325,12 @@ const CATEGORY_META={
   'outdoor':{label:'Outdoors',emoji:'\u{1F33F}'},
   'reading':{label:'Reading',emoji:'\u{1F4DA}'},
   'touch':{label:'Massage & touch',emoji:'\u{1F90D}'},
+  'bath':{label:'Bath & water',emoji:'\u{1F6C1}'},
   'routines':{label:'Everyday',emoji:'\u{1F9FA}'}
 };
 function catMeta(c){return CATEGORY_META[c]||{label:c||'Other',emoji:'\u{1F9F8}'};}
 /* ============================= SEED DATA ============================= */
-const SEED_VERSION=1;
+const SEED_VERSION=2;
 /* Authored fields only. Ids are permanent — never rename one once shipped. */
 const SEED_ACTIVITIES=[
 /* -------- Tummy time (6) -------- */
@@ -441,7 +442,78 @@ const SEED_ACTIVITIES=[
 {id:'a-nappy-narration',name:'Nappy-change cabaret',category:'routines',ageRange:{minMonths:0,maxMonths:10},baseDuration:3,tags:['no-props','talky'],
  description:'Turn the change table into a stage: narrate every step, name body parts, add a rhyme and a raspberry on the tummy at the end.\n\nDozens of changes a week — each one a tiny language lesson.'},
 {id:'a-washing-helper',name:'Laundry assistant',category:'routines',ageRange:{minMonths:1,maxMonths:9},baseDuration:5,tags:['props','talky'],
- description:'Do the folding with bub lying beside the pile. Waft a warm towel gently over them, play peekaboo with a pillowcase, name the colours as you fold.\n\nChores plus entertainment in one.'}
+ description:'Do the folding with bub lying beside the pile. Waft a warm towel gently over them, play peekaboo with a pillowcase, name the colours as you fold.\n\nChores plus entertainment in one.'},
+/* ================= SEED BATCH 2 (SEED_VERSION 2) ================= */
+/* -------- Tummy time (3) -------- */
+{id:'a-ball-tummy',name:'Gym-ball tummy time',category:'tummy-time',ageRange:{minMonths:3,maxMonths:8},baseDuration:4,tags:['props','active'],
+ description:'Lie bub tummy-down on a big exercise ball, both hands firmly on their hips, and rock slowly forward, back and side to side. The gentle movement makes head-lifting easier and works the whole core.\n\nKeep your grip the entire time and keep the rocks small.'},
+{id:'a-tummy-carry',name:'Tummy-down carry',category:'tummy-time',ageRange:{minMonths:0,maxMonths:6},baseDuration:4,tags:['no-props','active'],
+ description:'Lay bub tummy-down along your forearm — head near your elbow, legs either side of your hand — and go for a slow wander around the house. Tummy time without the mat protests, and the pressure on the belly can soothe wind too.\n\nNarrate the tour as you go.'},
+{id:'a-water-mat',name:'Water-mat play',category:'tummy-time',ageRange:{minMonths:3,maxMonths:8},baseDuration:5,tags:['props','floor'],
+ description:'Set out an inflatable water mat — the sealed kind with floating shapes inside — for tummy time. Every press and pat makes the shapes drift and bob, which is excellent motivation to stay down and play.\n\nCheck the seams for leaks now and then.'},
+/* -------- Sensory (4) -------- */
+{id:'a-ribbon-ring',name:'Ribbon ring',category:'sensory',ageRange:{minMonths:3,maxMonths:8},baseDuration:4,tags:['props'],
+ description:'Tie short ribbons of different colours and textures to a wooden or plastic ring. Wave it slowly, let the ribbons tickle past bub’s hands, then let them grab, wave and mouth it.\n\nKeep ribbons short and knots tight; supervise closely.'},
+{id:'a-sensory-bag',name:'Squishy sensory bag',category:'sensory',ageRange:{minMonths:3,maxMonths:9},baseDuration:5,tags:['props','floor'],
+ description:'Fill a strong zip-lock bag with hair gel and a few buttons or beads, seal it well with tape, and tape it flat to the floor for tummy time. Every press squishes and swirls — mess-free finger painting.\n\nCheck the seal before each go and bin it at the first sign of a leak.'},
+{id:'a-wind-chimes',name:'Wind-chime watching',category:'sensory',ageRange:{minMonths:1,maxMonths:7},baseDuration:4,tags:['quiet','props'],
+ description:'Hold bub near a wind chime — at a window, on the veranda, or dangle one from your hand — and let them watch and listen as it moves. Sound plus slow motion in one neat package.\n\nGive it the odd gentle tap during a lull in the breeze.'},
+{id:'a-sniff-safari',name:'Smell safari',category:'sensory',ageRange:{minMonths:3,maxMonths:9},baseDuration:3,tags:['quiet','props'],
+ description:'Waft a few gentle smells under bub’s nose one at a time: a vanilla pod, a cut orange, a sprig of lavender, your coffee (theirs to smell, yours to drink). Name each one and watch the face they pull.\n\nGentle waft only — nothing sharp, and nothing touching the nose.'},
+/* -------- Music & songs (3) -------- */
+{id:'a-body-drum',name:'Body drumming',category:'music',ageRange:{minMonths:0,maxMonths:8},baseDuration:3,tags:['no-props'],
+ description:'Tap out gentle rhythms on bub’s knees, tummy and the soles of their feet while chanting or singing the beat. They feel the rhythm on their own body — no instruments required.\n\nFinish each verse with a little flourish and a cheer.'},
+{id:'a-bell-socks',name:'Jingle socks',category:'music',ageRange:{minMonths:3,maxMonths:8},baseDuration:5,tags:['props','active','floor'],
+ description:'Pop socks with securely attached bells onto bub’s feet (or stitch a bell onto a bootie) and lie them under the play gym. Every kick makes music — cause and effect with a soundtrack.\n\nCheck the bells are sewn on fast; nothing that can come loose.'},
+{id:'a-high-low',name:'Voice high and low',category:'music',ageRange:{minMonths:0,maxMonths:8},baseDuration:3,tags:['no-props','talky','quiet'],
+ description:'Sing or say the same little phrase every way you can: whispered, boomed, squeaked, sung like opera. Watch the eyebrows shoot up at each change.\n\nPause between voices to let them react — the anticipation is half the fun.'},
+/* -------- Motor skills (4) -------- */
+{id:'a-side-lying',name:'Side-lying play',category:'motor',ageRange:{minMonths:2,maxMonths:6},baseDuration:4,tags:['floor'],
+ description:'Lie bub on their side with a rolled towel snug behind the back and a toy just in front. This position brings both hands together at the midline — great for two-handed grabbing, and a stepping stone to rolling.\n\nSwap sides halfway through.'},
+{id:'a-supported-sit',name:'Propped-up sitting',category:'motor',ageRange:{minMonths:4,maxMonths:8},baseDuration:4,tags:['floor','props'],
+ description:'Sit bub between your legs or inside a cushion fortress, hands free to play with a toy in front. Short, happy stints build the trunk strength for real sitting.\n\nStay within arm’s reach — dramatic sideways timber is part of the process.'},
+{id:'a-grab-feet',name:'Find those feet',category:'motor',ageRange:{minMonths:3,maxMonths:7},baseDuration:3,tags:['floor','no-props'],
+ description:'With bub on their back, guide their hands down to their feet and let go. Discovering their own toes is a proper developmental milestone — hip flexibility, body map, and eventually toes-in-mouth.\n\nNappy-off time makes this one even better.'},
+{id:'a-standing-holds',name:'Supported standing',category:'motor',ageRange:{minMonths:4,maxMonths:8},baseDuration:3,tags:['no-props'],
+ description:'Hold bub fully supported under the arms with their feet flat on a firm floor and let them take some weight, push and bounce. Strong legs in training.\n\nA few short goes is plenty — stop while the knees are still springy.'},
+/* -------- Visual (3) -------- */
+{id:'a-rolling-ball',name:'Follow the ball',category:'visual',ageRange:{minMonths:3,maxMonths:8},baseDuration:3,tags:['props','floor'],
+ description:'With bub propped or on their tummy, roll a bright ball slowly across their field of view, left to right and back. Tracking a moving object on the ground is trickier than in the air — proper eye gymnastics.\n\nLet them lunge for it when the urge strikes.'},
+{id:'a-track-and-hide',name:'Now you see it',category:'visual',ageRange:{minMonths:4,maxMonths:9},baseDuration:4,tags:['props','quiet'],
+ description:'Move a favourite toy slowly across bub’s view, slide it behind a cushion, pause a beat, then pop it out the other side. Early object-permanence training — around this age they start to suspect hidden things still exist.\n\nBig reveal voice mandatory.'},
+{id:'a-ceiling-art',name:'Ceiling gallery',category:'visual',ageRange:{minMonths:0,maxMonths:6},baseDuration:4,tags:['props','quiet'],
+ description:'Tape a few high-contrast or boldly coloured pictures to the ceiling above the change table or cot-side play spot. Nappy changes and back-lying play get a built-in exhibition.\n\nRotate the collection weekly to keep the reviews strong.'},
+/* -------- Social (4) -------- */
+{id:'a-copycat',name:'Copycat game',category:'social',ageRange:{minMonths:2,maxMonths:9},baseDuration:4,tags:['no-props','talky'],
+ description:'Whatever bub does, do it straight back: their coo, their squeal, their tongue poke, their arm wave. Being imitated is fascinating at this age — watch them test whether you’ll do it again.\n\nLet them lead; you’re the mirror.'},
+{id:'a-video-call',name:'Video call a fan',category:'social',ageRange:{minMonths:2,maxMonths:12},baseDuration:6,tags:['props','talky'],
+ description:'Ring the grandparents or a doting friend on video and hold bub where they can see the screen. A moving, talking face that says their name — riveting stuff, and the fan club gets their fix too.\n\nProp the phone so your hands stay free.'},
+{id:'a-puppet-show',name:'Sock puppet visit',category:'social',ageRange:{minMonths:2,maxMonths:9},baseDuration:4,tags:['props','talky'],
+ description:'A sock on your hand becomes a visitor with a silly voice who chats to bub, nibbles their tummy, hides behind your back and pops out again. Cheap theatre, five-star reviews.\n\nGive the puppet a name — it’ll be requested for years.'},
+{id:'a-name-game',name:'Name and seek',category:'social',ageRange:{minMonths:4,maxMonths:9},baseDuration:3,tags:['no-props','talky'],
+ description:'Move quietly to different spots around bub and call their name in a warm, bright voice. Around this age they start turning to find you — celebrate every head-turn like a game-show win.\n\nVary near and far, left and right.'},
+/* -------- Outdoors & outings (3) -------- */
+{id:'a-carrier-walk',name:'Carrier wander',category:'outdoor',ageRange:{minMonths:0,maxMonths:9},baseDuration:15,tags:['outdoor','active','cuddly'],
+ description:'Pop bub in the carrier and take a slow walk — garden, street, bush track, anywhere. They get your heartbeat, your voice and the passing world all at once; many bubs are asleep by the second lap.\n\nNarrate the highlights as you go.'},
+{id:'a-cafe-outing',name:'Café people-watching',category:'outdoor',ageRange:{minMonths:1,maxMonths:12},baseDuration:15,tags:['outing'],
+ description:'Take bub to a café and let them face the room. Faces, clatter, movement, the coffee machine — it’s a sensory documentary, and you get a flat white out of it.\n\nGo at a quiet time of day for the gentler version.'},
+{id:'a-grass-feet',name:'Toes in the grass',category:'outdoor',ageRange:{minMonths:3,maxMonths:9},baseDuration:4,tags:['outdoor','quiet'],
+ description:'Hold bub so their bare feet brush the grass, then let their palms have a turn. Cool, tickly, slightly weird — brand-new information for brand-new feet.\n\nShade, and a quick check for prickles first.'},
+/* -------- Reading (2) -------- */
+{id:'a-library-visit',name:'Library rhyme time',category:'reading',ageRange:{minMonths:2,maxMonths:12},baseDuration:15,tags:['outing','quiet'],
+ description:'Take bub to the local library — most run free baby rhyme-time sessions, and the board-book bins are made for little hands. New faces, new voices, new books, all free.\n\nBorrow a couple so home story time stays fresh.'},
+{id:'a-flap-book',name:'Lift-the-flap book',category:'reading',ageRange:{minMonths:4,maxMonths:10},baseDuration:5,tags:['props','quiet'],
+ description:'Read a sturdy lift-the-flap book, guiding bub’s hand to help lift each flap. It’s peekaboo in book form, and the anticipation before each reveal is the whole show.\n\nExpect to read it eleven times in a row. This is normal.'},
+/* -------- Massage & touch (1) -------- */
+{id:'a-back-massage',name:'Back massage',category:'touch',ageRange:{minMonths:2,maxMonths:8},baseDuration:4,tags:['quiet','wind-down'],
+ description:'With bub lying tummy-down across your lap or on the mat, stroke slowly down the back from shoulders to nappy with warm hands. Long, calm strokes — sneaky bonus tummy time included.\n\nLovely straight after the bath.'},
+/* -------- Bath & water (3) -------- */
+{id:'a-kick-splash',name:'Bath kicks and splashes',category:'bath',ageRange:{minMonths:2,maxMonths:8},baseDuration:5,tags:['props'],
+ description:'In a shallow, warm bath, support bub securely and let them kick, splash and feel the water move. Add a floating cup or bath toy to bat at.\n\nBoth hands on duty and never step away — even for a moment.'},
+{id:'a-bath-pour',name:'Waterfall pours',category:'bath',ageRange:{minMonths:3,maxMonths:9},baseDuration:4,tags:['props','quiet'],
+ description:'During the bath, fill a cup and pour warm water slowly over bub’s shoulders, back and tummy from just above the skin. The trickling feel and sound is mesmerising — many bubs go completely still to concentrate.\n\nKeep pours away from the face.'},
+{id:'a-bath-sing',name:'Bathroom concert',category:'bath',ageRange:{minMonths:0,maxMonths:9},baseDuration:3,tags:['no-props','quiet','wind-down'],
+ description:'Bathrooms have the best acoustics in the house — sing to bub during or just after the bath and let the echo do the production work. Slow songs land especially well in there.\n\nA fine closing number for the bedtime routine.'}
 ];
 /* ============================= APP STATE ============================= */
 const App={

@@ -6,7 +6,7 @@ A pocket bank of age-appropriate baby activities that learns what actually works
 
 ## Features
 
-- **Activity bank** — 50 built-in activities for young babies across ten categories (tummy time, sensory, music, motor skills, visual, social, outdoors, reading, massage & touch, everyday routines), each tagged with a duration and an age range. Add your own any time.
+- **Activity bank** — 80 built-in activities for young babies across eleven categories (tummy time, sensory, music, motor skills, visual, social, outdoors, reading, massage & touch, bath & water, everyday routines), each tagged with a duration and an age range. Add your own any time.
 - **Browse** with search, category and tag filters — only age-appropriate activities are shown by default.
 - **Random activity** — a weighted pick that favours variety and things you haven't done lately.
 - **Itinerary builder** — tell it how many minutes you need to fill and it assembles a varied, age-appropriate plan that fits, then walks you through it one activity at a time.
