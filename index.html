@@ -13,8 +13,9 @@ try{
   var t=localStorage.getItem('bt-theme');
   if(!t)t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
   document.documentElement.dataset.theme=t;
+  var tc={light:'#faf5ef',dark:'#121014',pastel:'#f3eefa',bright:'#fff7fa'};
   var tm=document.querySelector('meta[name=theme-color]');
-  if(tm)tm.setAttribute('content',t==='dark'?'#121014':(t==='pastel'?'#f3eefa':'#faf5ef'));
+  if(tm)tm.setAttribute('content',tc[t]||tc.light);
 }catch(e){}
 </script>
 <style>
@@ -44,6 +45,18 @@ html[data-theme="pastel"] body{
   --warn:#8a6212; --warn-soft:#e8c96e2e;
   --ok:#468655; --ok-soft:#8fd6a02e;
   --sel:#f4b8c833; --shadow:0 6px 24px rgba(122,92,146,.18);
+}
+/* Bright theme: airy white-pink surfaces, bright sorbet accents, indigo text (AA kept) */
+html[data-theme="bright"] body{
+  --bg:#fff7fa; --bg2:#ffffff; --bg3:#ffeaf1; --bg4:#ffd9e6;
+  --fg:#372f4f; --fg-dim:#645a85; --fg-faint:#756a8e;
+  --border:#f6cfdd; --border2:#e3a8c0;
+  --accent:#ff8fab; --accent-soft:#ff8fab2e; --accent-fg:#4d1226;
+  --teal:#0e8577; --teal-soft:#4fd8c42b;
+  --danger:#d6336c; --danger-soft:#d6336c14;
+  --warn:#9a6700; --warn-soft:#ffd43b33;
+  --ok:#2b7a3d; --ok-soft:#69db7c2e;
+  --sel:#ff8fab24; --shadow:0 6px 24px rgba(214,110,150,.22);
 }
 html[data-theme="dark"] body{
   --bg:#121014; --bg2:#1a171c; --bg3:#282329; --bg4:#383239;
@@ -251,7 +264,7 @@ function localToday(){
   const d=new Date();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
-const THEME_COLORS={light:'#faf5ef',dark:'#121014',pastel:'#f3eefa'};
+const THEME_COLORS={light:'#faf5ef',dark:'#121014',pastel:'#f3eefa',bright:'#fff7fa'};
 function setTheme(t){
   document.documentElement.dataset.theme=t;
   try{localStorage.setItem('bt-theme',t);}catch(e){}
@@ -1349,11 +1362,11 @@ function renderSettings(m){
     }},'Save date'));
   /* appearance */
   const themeNow=document.documentElement.dataset.theme;
-  const THEME_CHOICES=[['light','☀️ Light'],['dark','\u{1F319} Dark'],['pastel','\u{1F338} Pastel']];
+  const THEME_CHOICES=[['light','☀️ Light'],['dark','\u{1F319} Dark'],['pastel','\u{1F338} Pastel'],['bright','\u{1F36D} Bright']];
   const sec2=el('div',{class:'setsec'},
     el('h3',null,'Appearance'),
     el('div',{class:'row'},THEME_CHOICES.map(([id,label])=>
-      el('button',{class:themeNow===id?'primary':'',style:'flex:1','aria-pressed':themeNow===id?'true':'false',
+      el('button',{class:themeNow===id?'primary':'',style:'flex:1 1 40%','aria-pressed':themeNow===id?'true':'false',
         onclick:()=>setTheme(id)},label))));
   /* data */
   const importInput=el('input',{type:'file',accept:'.json,application/json',style:'display:none',onchange:async e=>{
