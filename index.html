@@ -116,8 +116,8 @@ button.card{display:block;width:100%;text-align:left;font:inherit}
 .bretired{color:var(--fg-faint);font-weight:600}
 .acard.is-retired .nm{color:var(--fg-faint);text-decoration:line-through}
 /* ---- activity view ---- */
-.actwrap{padding-bottom:150px}
-.actwrap.itin{padding-bottom:220px}
+.actwrap{padding-bottom:200px}
+.actwrap.itin{padding-bottom:270px}
 .acthead .catchip{margin-bottom:10px}
 .acthead h1{font-size:26px;font-weight:800}
 .actmeta{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 4px;color:var(--fg-dim);font-size:14px}
@@ -134,6 +134,10 @@ button.card{display:block;width:100%;text-align:left;font:inherit}
 .actionbar .inner{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
 .actionbar .mainrow{display:flex;gap:8px}
 .actionbar .mainrow .primary{flex:1;min-height:56px;font-size:17px}
+.timerrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.tlabel{font-size:12px;color:var(--fg-dim)}
+.tdigits{font:700 26px/1.1 var(--mono);letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.tdigits.paused{color:var(--fg-faint)}
 .flagnote{background:var(--warn-soft);border:1px solid var(--warn);border-radius:12px;padding:10px 14px;margin:12px 0;font-size:14px}
 /* ---- itinerary ---- */
 .itintotal{font-size:15px;font-weight:650;margin:10px 0}
@@ -423,7 +427,8 @@ const App={
   data:null,
   stack:[],
   nowOffsetMs:0,
-  sessionStart:null,
+  timer:null,      /* {activityId, startedAt, accumMs, paused} — wall-clock stopwatch */
+  timerTick:null,
   installPrompt:null,
   wakeLock:null,
   browse:{q:'',cat:null,tags:[],allAges:false,showRetired:false}
@@ -577,6 +582,20 @@ function recordCompletion(a,mins,wentWell){
   return a.flagged&&!wasFlagged;
 }
 function flaggedCount(){return App.data.activities.filter(a=>a.flagged&&!a.retired).length;}
+/* ---- activity stopwatch (real wall clock, not App.now — dev clock shifts
+       must not distort a live timing session) ---- */
+function startTimer(id){App.timer={activityId:id,startedAt:Date.now(),accumMs:0,paused:false};}
+function timerElapsedMs(){
+  const t=App.timer;
+  if(!t)return 0;
+  return t.accumMs+(t.paused?0:Date.now()-t.startedAt);
+}
+function pauseTimer(){const t=App.timer;if(t&&!t.paused){t.accumMs+=Date.now()-t.startedAt;t.paused=true;}}
+function resumeTimer(){const t=App.timer;if(t&&t.paused){t.startedAt=Date.now();t.paused=false;}}
+function fmtElapsed(ms){
+  const s=Math.max(0,Math.floor(ms/1000));
+  return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+}
 /* ---- picking & itineraries ---- */
 function daysSinceLast(a){
   if(!a.history.length)return null;
@@ -681,6 +700,7 @@ function requestWakeLock(){
 function renderView(entry){
   App.wakeToken=(App.wakeToken||0)+1;
   releaseWakeLock();
+  if(App.timerTick){clearInterval(App.timerTick);App.timerTick=null;}
   const m=$('#main');m.innerHTML='';
   $('#tbRight').innerHTML='';
   $('#tbBack').classList.toggle('hidden',App.stack.length<=1);
@@ -829,11 +849,10 @@ function renderActivity(m,p){
   const ctx=p.ctx||'browse';
   setTitle(catMeta(a.category).label);
   $('#tbRight').append(el('button',{class:'ghost small',onclick:()=>nav('editor',{id:a.id})},'Edit'));
-  App.sessionStart=Date.now();
-  if(ctx==='itinerary'||ctx==='random'){
-    App.wantWakeLock=true;
-    requestWakeLock();
-  }
+  /* stopwatch: continues if we're returning to the same activity, otherwise starts fresh */
+  if(!App.timer||App.timer.activityId!==a.id)startTimer(a.id);
+  App.wantWakeLock=true; /* a timed session shouldn't let the screen lock */
+  requestWakeLock();
   const wrap=el('div',{class:'actwrap'+(ctx==='itinerary'?' itin':'')});
   const it=App.data.itinerary;
   if(ctx==='itinerary'&&it){
@@ -869,9 +888,25 @@ function renderActivity(m,p){
   }
   m.append(wrap);
   /* action bar */
+  const tdisp=el('span',{class:'tdigits'+(App.timer.paused?' paused':'')},fmtElapsed(timerElapsedMs()));
+  const pbtn=el('button',{class:'small','aria-label':'Pause or resume timer',onclick:()=>{
+    if(App.timer.paused){resumeTimer();pbtn.textContent='⏸ Pause';tdisp.classList.remove('paused');}
+    else{pauseTimer();pbtn.textContent='▶ Resume';tdisp.classList.add('paused');}
+    tdisp.textContent=fmtElapsed(timerElapsedMs());
+  }},App.timer.paused?'▶ Resume':'⏸ Pause');
+  const rbtn=el('button',{class:'small ghost','aria-label':'Restart timer',onclick:()=>{
+    startTimer(a.id);
+    tdisp.textContent='00:00';tdisp.classList.remove('paused');
+    pbtn.textContent='⏸ Pause';
+    toast('Timer restarted');
+  }},'↺');
+  App.timerTick=setInterval(()=>{tdisp.textContent=fmtElapsed(timerElapsedMs());},1000);
+  const timerRow=el('div',{class:'timerrow'},
+    el('div',null,el('div',{class:'tlabel'},'Activity timer'),tdisp),
+    el('div',{class:'row'},pbtn,rbtn));
   const mainRow=el('div',{class:'mainrow'},
     el('button',{class:'primary',onclick:()=>completeActivity(a,ctx)},'✔ Mark completed'));
-  const bar=el('div',{class:'actionbar'},el('div',{class:'inner'},mainRow));
+  const bar=el('div',{class:'actionbar'},el('div',{class:'inner'},timerRow,mainRow));
   if(ctx==='itinerary'&&it){
     mainRow.append(el('button',{onclick:()=>advanceItinerary('skipped'),style:'min-height:56px'},'Skip'));
     bar.querySelector('.inner').append(
@@ -890,15 +925,17 @@ function renderActivity(m,p){
   m.append(bar);
 }
 /* ---- completion flow ---- */
-function askEngagedMinutes(a){
+function askEngagedMinutes(a,elapsedMs){
   return new Promise(res=>{
-    const elapsed=App.sessionStart?Math.round((Date.now()-App.sessionStart)/60000):0;
-    const start=elapsed>=1&&elapsed<=120?elapsed:expectedDuration(a);
+    const timed=elapsedMs!=null;
+    const start=timed?Math.max(0,Math.min(600,Math.round(elapsedMs/60000))):expectedDuration(a);
     const inp=el('input',{type:'number',inputmode:'numeric',min:0,max:600,value:start});
     const bump=d=>{const v=Math.max(0,Math.min(600,(+inp.value||0)+d));inp.value=v;};
     showModal(el('div',{class:'modal'},
       el('h2',null,'How long was bub engaged?'),
       el('div',{class:'dim small'},a.name),
+      timed?el('div',{class:'small',style:'margin-top:8px'},
+        '⏱ Timer clocked '+fmtElapsed(elapsedMs)+' — adjust below if bub checked out earlier.'):null,
       el('div',{class:'stepper'},
         el('button',{onclick:()=>bump(-1)},'−'),
         inp,
@@ -910,7 +947,7 @@ function askEngagedMinutes(a){
           const v=+inp.value;
           if(!isFinite(v)||v<0){toast('Enter the minutes bub was engaged','err');return;}
           closeModal();res(Math.min(600,Math.round(v)));
-        }},'Next'))),
+        }},'Log it'))),
       ()=>res(null));
   });
 }
@@ -933,10 +970,16 @@ async function completeActivity(a,ctx){
   if(App.completing)return;
   App.completing=true;
   try{
-    const mins=await askEngagedMinutes(a);
-    if(mins==null)return;
+    /* freeze the stopwatch while the log dialogs are open */
+    const timerWasRunning=App.timer&&App.timer.activityId===a.id&&!App.timer.paused;
+    const elapsedMs=App.timer&&App.timer.activityId===a.id?timerElapsedMs():null;
+    pauseTimer();
+    const resume=()=>{if(timerWasRunning)resumeTimer();};
+    const mins=await askEngagedMinutes(a,elapsedMs);
+    if(mins==null){resume();return;}
     const well=await askWentWell(a);
-    if(well==null)return;
+    if(well==null){resume();return;}
+    App.timer=null; /* session logged — next visit starts a fresh timer */
     const newlyFlagged=recordCompletion(a,mins,well);
     if(newlyFlagged)toast('\u{1F6A9} '+a.name+' flagged after three tough runs — it’s waiting in the Review inbox');
     else toast(well?'Logged — nice one \u{1F389}':'Logged — they can’t all be winners');

@@ -10,6 +10,7 @@ A pocket bank of age-appropriate baby activities that learns what actually works
 - **Browse** with search, category and tag filters — only age-appropriate activities are shown by default.
 - **Random activity** — a weighted pick that favours variety and things you haven't done lately.
 - **Itinerary builder** — tell it how many minutes you need to fill and it assembles a varied, age-appropriate plan that fits, then walks you through it one activity at a time.
+- **Built-in stopwatch** — a timer runs with every activity (pause/resume/restart) and pre-fills the log when you mark it complete; confirm or tweak the minutes before saving.
 - **It learns** — each completion records how long your baby stayed engaged; expected durations become a rolling average of the last five runs.
 - **It notices problems** — three "went poorly" results in a row sends an activity to the Review inbox for you to keep, tweak or retire.
 - **Grows with your baby** — enter the date of birth once and the bank re-filters itself as they grow.
