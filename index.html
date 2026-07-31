@@ -343,21 +343,21 @@ const CATEGORY_META={
 };
 function catMeta(c){return CATEGORY_META[c]||{label:c||'Other',emoji:'\u{1F9F8}'};}
 /* ============================= SEED DATA ============================= */
-const SEED_VERSION=2;
+const SEED_VERSION=3;
 /* Authored fields only. Ids are permanent — never rename one once shipped. */
 const SEED_ACTIVITIES=[
 /* -------- Tummy time (6) -------- */
-{id:'a-tummy-mat',name:'Tummy time on the play mat',category:'tummy-time',ageRange:{minMonths:2,maxMonths:6},baseDuration:5,tags:['floor','active'],
+{id:'a-tummy-mat',name:'Tummy time on the play mat',category:'tummy-time',ageRange:{minMonths:2,maxMonths:6},baseDuration:5,tags:['tummy-time','floor','active'],
  description:'Lay bub tummy-down on a firm mat with one or two toys just in reach. Get down to eye level and chat or jiggle a toy to encourage lifting and turning the head.\n\nFinish before the grizzles start, so tummy time stays a happy place.'},
-{id:'a-tummy-mirror',name:'Tummy time with a mirror',category:'tummy-time',ageRange:{minMonths:2,maxMonths:6},baseDuration:5,tags:['floor','props'],
+{id:'a-tummy-mirror',name:'Tummy time with a mirror',category:'tummy-time',ageRange:{minMonths:2,maxMonths:6},baseDuration:5,tags:['tummy-time','floor','props'],
  description:'Prop a baby-safe mirror in front of bub during tummy time. The fascinating baby staring back encourages head lifting and longer, happier sessions.\n\nNarrate what they’re seeing: “Who’s that gorgeous baby?”'},
-{id:'a-tummy-chest',name:'Chest-to-chest tummy time',category:'tummy-time',ageRange:{minMonths:0,maxMonths:5},baseDuration:5,tags:['no-props','cuddly'],
+{id:'a-tummy-chest',name:'Chest-to-chest tummy time',category:'tummy-time',ageRange:{minMonths:0,maxMonths:5},baseDuration:5,tags:['tummy-time','no-props','cuddly'],
  description:'Lie back on the couch or bed, semi-reclined, with bub on your chest facing you. Talk and pull faces — they’ll work those neck muscles to look at you.\n\nLovely low-pressure tummy time for days when the mat isn’t a hit.'},
-{id:'a-tummy-towel',name:'Tummy time over a rolled towel',category:'tummy-time',ageRange:{minMonths:2,maxMonths:6},baseDuration:4,tags:['floor','props'],
+{id:'a-tummy-towel',name:'Tummy time over a rolled towel',category:'tummy-time',ageRange:{minMonths:2,maxMonths:6},baseDuration:4,tags:['tummy-time','floor','props'],
  description:'Place a rolled towel under bub’s chest with their arms forward over the roll. The slight lift makes head-raising easier and gives a fresh view of the room.\n\nSlide a toy or high-contrast card into view to keep it interesting.'},
-{id:'a-tummy-cards',name:'Tummy time gallery',category:'tummy-time',ageRange:{minMonths:2,maxMonths:6},baseDuration:5,tags:['floor','props'],
+{id:'a-tummy-cards',name:'Tummy time gallery',category:'tummy-time',ageRange:{minMonths:2,maxMonths:6},baseDuration:5,tags:['tummy-time','floor','props'],
  description:'Set up high-contrast cards or bold picture books in an arc in front of bub during tummy time, like a little art gallery. Move one card slowly from side to side.\n\nSwap cards when attention drifts.'},
-{id:'a-aeroplane',name:'Aeroplane rides',category:'tummy-time',ageRange:{minMonths:3,maxMonths:8},baseDuration:3,tags:['active','no-props'],
+{id:'a-aeroplane',name:'Aeroplane rides',category:'tummy-time',ageRange:{minMonths:3,maxMonths:8},baseDuration:3,tags:['tummy-time','active','no-props'],
  description:'Lie on your back with knees bent and bub resting tummy-down along your shins, holding them securely the whole time. Gentle sways and lifts — with sound effects — build neck and core strength while feeling like a game.'},
 /* -------- Sensory (8) -------- */
 {id:'a-texture-tour',name:'Texture touch tour',category:'sensory',ageRange:{minMonths:2,maxMonths:7},baseDuration:5,tags:['props','quiet'],
@@ -425,13 +425,13 @@ const SEED_ACTIVITIES=[
 {id:'a-photo-chat',name:'Family photo chat',category:'social',ageRange:{minMonths:2,maxMonths:10},baseDuration:4,tags:['props','talky','quiet'],
  description:'Look at photos of family together — on the wall or your phone. Point and name each person warmly: “That’s Grandma!”.\n\nFaces are bub’s favourite subject, and named faces build early recognition.'},
 /* -------- Outdoors (4) -------- */
-{id:'a-pram-walk',name:'Pram walk and chat',category:'outdoor',ageRange:{minMonths:0,maxMonths:12},baseDuration:15,tags:['outdoor','active'],
+{id:'a-pram-walk',name:'Pram walk and chat',category:'outdoor',ageRange:{minMonths:0,maxMonths:12},baseDuration:15,tags:['fresh-air','active'],
  description:'A stroll with running commentary: the weather, the dogs, the neighbours’ garden gnomes. Fresh air often resets a scratchy mood — theirs and yours.\n\nTime it before a nap and the motion may do the settling for you.'},
-{id:'a-tree-gazing',name:'Tree gazing',category:'outdoor',ageRange:{minMonths:1,maxMonths:8},baseDuration:8,tags:['outdoor','quiet','wind-down'],
+{id:'a-tree-gazing',name:'Tree gazing',category:'outdoor',ageRange:{minMonths:1,maxMonths:8},baseDuration:8,tags:['fresh-air','quiet','wind-down'],
  description:'Lie bub on a blanket in the shade under a tree and let them watch leaves and light move overhead. Nature’s own mobile.\n\nStay close and enjoy the excuse to lie down.'},
-{id:'a-veranda-weather',name:'Weather watching',category:'outdoor',ageRange:{minMonths:0,maxMonths:9},baseDuration:6,tags:['outdoor','quiet'],
+{id:'a-veranda-weather',name:'Weather watching',category:'outdoor',ageRange:{minMonths:0,maxMonths:9},baseDuration:6,tags:['fresh-air','quiet'],
  description:'Step outside or onto the veranda and let bub feel the day: breeze on their cheeks, warmth, the smell of rain. Describe it all.\n\nTwo minutes of weather beats twenty minutes of grizzling inside.'},
-{id:'a-garden-safari',name:'Garden safari',category:'outdoor',ageRange:{minMonths:1,maxMonths:9},baseDuration:6,tags:['outdoor','talky'],
+{id:'a-garden-safari',name:'Garden safari',category:'outdoor',ageRange:{minMonths:1,maxMonths:9},baseDuration:6,tags:['fresh-air','talky'],
  description:'Carry bub slowly around the garden or street greenery. Let them (gently) touch a leaf, smell a flower, watch a bee from a respectful distance.\n\nNarrate like Attenborough.'},
 /* -------- Reading (4) -------- */
 {id:'a-contrast-book',name:'High-contrast book',category:'reading',ageRange:{minMonths:0,maxMonths:5},baseDuration:5,tags:['props','quiet'],
@@ -458,16 +458,16 @@ const SEED_ACTIVITIES=[
  description:'Do the folding with bub lying beside the pile. Waft a warm towel gently over them, play peekaboo with a pillowcase, name the colours as you fold.\n\nChores plus entertainment in one.'},
 /* ================= SEED BATCH 2 (SEED_VERSION 2) ================= */
 /* -------- Tummy time (3) -------- */
-{id:'a-ball-tummy',name:'Gym-ball tummy time',category:'tummy-time',ageRange:{minMonths:3,maxMonths:8},baseDuration:4,tags:['props','active'],
+{id:'a-ball-tummy',name:'Gym-ball tummy time',category:'tummy-time',ageRange:{minMonths:3,maxMonths:8},baseDuration:4,tags:['tummy-time','props','active'],
  description:'Lie bub tummy-down on a big exercise ball, both hands firmly on their hips, and rock slowly forward, back and side to side. The gentle movement makes head-lifting easier and works the whole core.\n\nKeep your grip the entire time and keep the rocks small.'},
-{id:'a-tummy-carry',name:'Tummy-down carry',category:'tummy-time',ageRange:{minMonths:0,maxMonths:6},baseDuration:4,tags:['no-props','active'],
+{id:'a-tummy-carry',name:'Tummy-down carry',category:'tummy-time',ageRange:{minMonths:0,maxMonths:6},baseDuration:4,tags:['tummy-time','no-props','active'],
  description:'Lay bub tummy-down along your forearm — head near your elbow, legs either side of your hand — and go for a slow wander around the house. Tummy time without the mat protests, and the pressure on the belly can soothe wind too.\n\nNarrate the tour as you go.'},
-{id:'a-water-mat',name:'Water-mat play',category:'tummy-time',ageRange:{minMonths:3,maxMonths:8},baseDuration:5,tags:['props','floor'],
+{id:'a-water-mat',name:'Water-mat play',category:'tummy-time',ageRange:{minMonths:3,maxMonths:8},baseDuration:5,tags:['tummy-time','props','floor'],
  description:'Set out an inflatable water mat — the sealed kind with floating shapes inside — for tummy time. Every press and pat makes the shapes drift and bob, which is excellent motivation to stay down and play.\n\nCheck the seams for leaks now and then.'},
 /* -------- Sensory (4) -------- */
 {id:'a-ribbon-ring',name:'Ribbon ring',category:'sensory',ageRange:{minMonths:3,maxMonths:8},baseDuration:4,tags:['props'],
  description:'Tie short ribbons of different colours and textures to a wooden or plastic ring. Wave it slowly, let the ribbons tickle past bub’s hands, then let them grab, wave and mouth it.\n\nKeep ribbons short and knots tight; supervise closely.'},
-{id:'a-sensory-bag',name:'Squishy sensory bag',category:'sensory',ageRange:{minMonths:3,maxMonths:9},baseDuration:5,tags:['props','floor'],
+{id:'a-sensory-bag',name:'Squishy sensory bag',category:'sensory',ageRange:{minMonths:3,maxMonths:9},baseDuration:5,tags:['props','floor','tummy-time'],
  description:'Fill a strong zip-lock bag with hair gel and a few buttons or beads, seal it well with tape, and tape it flat to the floor for tummy time. Every press squishes and swirls — mess-free finger painting.\n\nCheck the seal before each go and bin it at the first sign of a leak.'},
 {id:'a-wind-chimes',name:'Wind-chime watching',category:'sensory',ageRange:{minMonths:1,maxMonths:7},baseDuration:4,tags:['quiet','props'],
  description:'Hold bub near a wind chime — at a window, on the veranda, or dangle one from your hand — and let them watch and listen as it moves. Sound plus slow motion in one neat package.\n\nGive it the odd gentle tap during a lull in the breeze.'},
@@ -506,11 +506,11 @@ const SEED_ACTIVITIES=[
 {id:'a-name-game',name:'Name and seek',category:'social',ageRange:{minMonths:4,maxMonths:9},baseDuration:3,tags:['no-props','talky'],
  description:'Move quietly to different spots around bub and call their name in a warm, bright voice. Around this age they start turning to find you — celebrate every head-turn like a game-show win.\n\nVary near and far, left and right.'},
 /* -------- Outdoors & outings (3) -------- */
-{id:'a-carrier-walk',name:'Carrier wander',category:'outdoor',ageRange:{minMonths:0,maxMonths:9},baseDuration:15,tags:['outdoor','active','cuddly'],
+{id:'a-carrier-walk',name:'Carrier wander',category:'outdoor',ageRange:{minMonths:0,maxMonths:9},baseDuration:15,tags:['fresh-air','active','cuddly'],
  description:'Pop bub in the carrier and take a slow walk — garden, street, bush track, anywhere. They get your heartbeat, your voice and the passing world all at once; many bubs are asleep by the second lap.\n\nNarrate the highlights as you go.'},
 {id:'a-cafe-outing',name:'Café people-watching',category:'outdoor',ageRange:{minMonths:1,maxMonths:12},baseDuration:15,tags:['outing'],
  description:'Take bub to a café and let them face the room. Faces, clatter, movement, the coffee machine — it’s a sensory documentary, and you get a flat white out of it.\n\nGo at a quiet time of day for the gentler version.'},
-{id:'a-grass-feet',name:'Toes in the grass',category:'outdoor',ageRange:{minMonths:3,maxMonths:9},baseDuration:4,tags:['outdoor','quiet'],
+{id:'a-grass-feet',name:'Toes in the grass',category:'outdoor',ageRange:{minMonths:3,maxMonths:9},baseDuration:4,tags:['fresh-air','quiet'],
  description:'Hold bub so their bare feet brush the grass, then let their palms have a turn. Cool, tickly, slightly weird — brand-new information for brand-new feet.\n\nShade, and a quick check for prickles first.'},
 /* -------- Reading (2) -------- */
 {id:'a-library-visit',name:'Library rhyme time',category:'reading',ageRange:{minMonths:2,maxMonths:12},baseDuration:15,tags:['outing','quiet'],
@@ -518,7 +518,7 @@ const SEED_ACTIVITIES=[
 {id:'a-flap-book',name:'Lift-the-flap book',category:'reading',ageRange:{minMonths:4,maxMonths:10},baseDuration:5,tags:['props','quiet'],
  description:'Read a sturdy lift-the-flap book, guiding bub’s hand to help lift each flap. It’s peekaboo in book form, and the anticipation before each reveal is the whole show.\n\nExpect to read it eleven times in a row. This is normal.'},
 /* -------- Massage & touch (1) -------- */
-{id:'a-back-massage',name:'Back massage',category:'touch',ageRange:{minMonths:2,maxMonths:8},baseDuration:4,tags:['quiet','wind-down'],
+{id:'a-back-massage',name:'Back massage',category:'touch',ageRange:{minMonths:2,maxMonths:8},baseDuration:4,tags:['quiet','wind-down','tummy-time'],
  description:'With bub lying tummy-down across your lap or on the mat, stroke slowly down the back from shoulders to nappy with warm hands. Long, calm strokes — sneaky bonus tummy time included.\n\nLovely straight after the bath.'},
 /* -------- Bath & water (3) -------- */
 {id:'a-kick-splash',name:'Bath kicks and splashes',category:'bath',ageRange:{minMonths:2,maxMonths:8},baseDuration:5,tags:['props'],
@@ -561,6 +561,12 @@ function seedData(){
 }
 function mergeSeeds(d){
   if((d.seedVersion||0)>=SEED_VERSION)return false;
+  if((d.seedVersion||0)<3){
+    /* one-off migration (v3): the 'outdoor' tag became 'fresh-air'.
+       Applies to ALL activities, including user-modified and custom ones,
+       which the seed refresh below deliberately leaves alone. */
+    for(const a of d.activities)a.tags=a.tags.map(t=>t==='outdoor'?'fresh-air':t);
+  }
   for(const s of SEED_ACTIVITIES){
     const a=d.activities.find(x=>x.id===s.id);
     if(!a){d.activities.push(activityFromSeed(s));continue;}
@@ -1146,27 +1152,17 @@ function renderItinerarySetup(m){
     chips.append(el('button',{class:'chip'+(p===30?' on':''),'data-v':p,onclick:()=>setTarget(p)},p+' min'));
   }
   custom.addEventListener('input',()=>{if(+custom.value>0)setTarget(+custom.value,true);});
-  /* optional pool filters: categories combine as ANY-of, tags as ALL-of */
-  const selCats=new Set(),selTags=new Set();
+  /* optional pool filter: tag chips combine as ALL-of */
+  const selTags=new Set();
   const pickable=App.data.activities.filter(isPickable);
-  const cats=[...new Set(pickable.map(a=>a.category))];
   const allTags=[...new Set(pickable.flatMap(a=>a.tags))].sort();
-  const poolFilter=a=>(!selCats.size||selCats.has(a.category))&&[...selTags].every(t=>a.tags.includes(t));
+  const poolFilter=a=>[...selTags].every(t=>a.tags.includes(t));
   const countLine=el('div',{class:'small dim',style:'margin:6px 0 2px'});
   function refreshCount(){
     const n=App.data.activities.filter(isPickable).filter(poolFilter).length;
-    countLine.textContent=(selCats.size||selTags.size)
+    countLine.textContent=selTags.size
       ?(n+' activit'+(n===1?'y':'ies')+' match'+(n===1?'es':'')+' those filters')
       :('Drawing from all '+n+' available activities');
-  }
-  const catRow=el('div',{class:'chipwrap'});
-  for(const c of cats){
-    const meta=catMeta(c);
-    const b=el('button',{class:'chip',onclick:()=>{
-      selCats.has(c)?selCats.delete(c):selCats.add(c);
-      b.classList.toggle('on');refreshCount();
-    }},meta.emoji+' '+meta.label);
-    catRow.append(b);
   }
   const tagRow=el('div',{class:'chipwrap'});
   for(const t of allTags){
@@ -1210,7 +1206,6 @@ function renderItinerarySetup(m){
     chips,
     el('div',{class:'row'},custom,el('span',{class:'dim'},'minutes')),
     el('p',{class:'dim',style:'margin-top:20px'},'Narrow it down (optional)'),
-    catRow,
     tagRow,
     countLine,
     el('button',{class:'primary',style:'width:100%;margin:16px 0;min-height:56px',onclick:build},'Build itinerary'),
