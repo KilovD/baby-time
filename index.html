@@ -733,9 +733,10 @@ function pickRandomActivity(excludeId,rng){
   if(!pool.length)return null;
   return weightedPick(pool,a=>scoreActivity(a,[]),rng);
 }
-function buildItinerary(target,rng){
+function buildItinerary(target,rng,poolFilter){
   rng=rng||Math.random;
-  const pool=App.data.activities.filter(isPickable);
+  let pool=App.data.activities.filter(isPickable);
+  if(poolFilter)pool=pool.filter(poolFilter);
   const picked=[];
   let remaining=target;
   const overshoot=Math.min(5,Math.round(target*.2));
@@ -748,7 +749,9 @@ function buildItinerary(target,rng){
   }
   if(!picked.length){
     const sorted=[...pool].sort((x,y)=>expectedDuration(x)-expectedDuration(y));
-    if(!sorted.length)return {items:[],note:'No activities are available right now — check the Review inbox or Browse with “All ages” on.'};
+    if(!sorted.length)return {items:[],note:poolFilter
+      ?'No available activities match those filters — try switching one off.'
+      :'No activities are available right now — check the Review inbox or Browse with “All ages” on.'};
     return {items:[sorted[0]],note:'Shortest available activity is '+expectedDuration(sorted[0])+' min, a bit over your target.'};
   }
   return {items:picked,note:null};
@@ -1143,10 +1146,41 @@ function renderItinerarySetup(m){
     chips.append(el('button',{class:'chip'+(p===30?' on':''),'data-v':p,onclick:()=>setTarget(p)},p+' min'));
   }
   custom.addEventListener('input',()=>{if(+custom.value>0)setTarget(+custom.value,true);});
+  /* optional pool filters: categories combine as ANY-of, tags as ALL-of */
+  const selCats=new Set(),selTags=new Set();
+  const pickable=App.data.activities.filter(isPickable);
+  const cats=[...new Set(pickable.map(a=>a.category))];
+  const allTags=[...new Set(pickable.flatMap(a=>a.tags))].sort();
+  const poolFilter=a=>(!selCats.size||selCats.has(a.category))&&[...selTags].every(t=>a.tags.includes(t));
+  const countLine=el('div',{class:'small dim',style:'margin:6px 0 2px'});
+  function refreshCount(){
+    const n=App.data.activities.filter(isPickable).filter(poolFilter).length;
+    countLine.textContent=(selCats.size||selTags.size)
+      ?(n+' activit'+(n===1?'y':'ies')+' match'+(n===1?'es':'')+' those filters')
+      :('Drawing from all '+n+' available activities');
+  }
+  const catRow=el('div',{class:'chipwrap'});
+  for(const c of cats){
+    const meta=catMeta(c);
+    const b=el('button',{class:'chip',onclick:()=>{
+      selCats.has(c)?selCats.delete(c):selCats.add(c);
+      b.classList.toggle('on');refreshCount();
+    }},meta.emoji+' '+meta.label);
+    catRow.append(b);
+  }
+  const tagRow=el('div',{class:'chipwrap'});
+  for(const t of allTags){
+    const b=el('button',{class:'chip',onclick:()=>{
+      selTags.has(t)?selTags.delete(t):selTags.add(t);
+      b.classList.toggle('on');refreshCount();
+    }},t);
+    tagRow.append(b);
+  }
+  refreshCount();
   const out=el('div');
   function build(){
     const t=Math.max(5,Math.min(240,target||30));
-    preview=buildItinerary(t);
+    preview=buildItinerary(t,undefined,poolFilter);
     out.innerHTML='';
     if(preview.note)out.append(el('div',{class:'flagnote'},preview.note));
     if(!preview.items.length)return;
@@ -1175,6 +1209,10 @@ function renderItinerarySetup(m){
     el('p',{class:'dim'},'How long do you need to fill?'),
     chips,
     el('div',{class:'row'},custom,el('span',{class:'dim'},'minutes')),
+    el('p',{class:'dim',style:'margin-top:20px'},'Narrow it down (optional)'),
+    catRow,
+    tagRow,
+    countLine,
     el('button',{class:'primary',style:'width:100%;margin:16px 0;min-height:56px',onclick:build},'Build itinerary'),
     out);
 }
